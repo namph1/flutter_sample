@@ -6,7 +6,7 @@ import 'home_page.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  static final channel = IOWebSocketChannel.connect("ws://192.168.95.2:5001");
+  static final channel = IOWebSocketChannel.connect("ws://192.168.123.1:5001");
 
   final routes = <String, WidgetBuilder>{
     LoginPage.tag: (context) => LoginPage(

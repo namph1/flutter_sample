@@ -2,6 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter_sample/home_page.dart';
+import 'dart:convert';
+import 'package:flutter_sample/model/test_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
+import 'dart:async';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -14,6 +19,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  var _key;
+
   @override
   Widget build(BuildContext context) {
     final logo = Hero(
@@ -47,12 +54,21 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
-    void _onLogin() {
-      widget.channel.sink.add("Hello server");  
+    _store_key(String key) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('counter', key);
+    }
 
-      widget.channel.stream.listen((content){
-        print(content);
+    void _onLogin() async {
+      widget.channel.sink.add("Hello server");
+
+      widget.channel.stream.listen((content) {
+        // PhotoList listPhoto = PhotoList.fromJson(json.decode(content));
+        // listPhoto.photos
+        //     .forEach((element) => print(element.Ngay + '-' + element.Tong));
+        _store_key(content);
       });
+
       Navigator.of(context).pushNamed(HomePage.tag);
     }
 
