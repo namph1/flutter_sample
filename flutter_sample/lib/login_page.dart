@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter_sample/home_page.dart';
 import 'dart:convert';
-import 'package:flutter_sample/model/test_model.dart';
+// import 'package:flutter_sample/model/test_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
-import 'dart:async';
+// import 'dart:async';
+import 'package:flutter_sample/utils/key.dart';
+import 'package:flutter_sample/model/login_model.dart';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -19,7 +21,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  var _key;
+  final emailController = TextEditingController();
+  final passController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -32,41 +35,62 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
-    final email = TextFormField(
+    final email = TextField(
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
-      initialValue: 'alucard@gmail.com',
+      // initialValue: 'alucard@gmail.com',
       decoration: InputDecoration(
         hintText: 'Email',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
+      controller: emailController,
     );
 
-    final password = TextFormField(
+    final password = TextField(
       autofocus: false,
-      initialValue: 'some password',
+      // initialValue: 'some password',
       obscureText: true,
       decoration: InputDecoration(
         hintText: 'Password',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
+      controller: passController,
     );
 
-    _store_key(String key) async {
+    _storeUser(LoginModel user) async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('counter', key);
+      prefs.remove("token");
+      prefs.remove("email");
+      prefs.remove("name");
+      prefs.setString('token', user.key);
+      prefs.setString('email', user.email);
+      await prefs.setString('name', user.user);
     }
 
     void _onLogin() async {
-      widget.channel.sink.add("Hello server");
+      var ojb = new LoginModel(
+        action: KeyUtils.loginaction,
+        email: emailController.text,
+        user: emailController.text,
+        pass: passController.text,
+        key: '',
+      );
+      widget.channel.sink.add(json.encode(ojb.toMap()));
 
       widget.channel.stream.listen((content) {
-        // PhotoList listPhoto = PhotoList.fromJson(json.decode(content));
-        // listPhoto.photos
-        //     .forEach((element) => print(element.Ngay + '-' + element.Tong));
-        _store_key(content);
+        List<LoginModel> users = UserList.fromJson(json.decode(content)).users;
+        print(users.length);
+        if(users.length == 1){
+          var user = users[0];
+          _storeUser(user);
+        }
+        print(UserList.fromJson(json.decode(content)).users.length);
+      //   // PhotoList listPhoto = PhotoList.fromJson(json.decode(content));
+      //   // listPhoto.photos
+      //   //     .forEach((element) => print(element.Ngay + '-' + element.Tong));
+      //   _storekey(content);
       });
 
       Navigator.of(context).pushNamed(HomePage.tag);
@@ -83,14 +107,14 @@ class _LoginPageState extends State<LoginPage> {
           height: 42.0,
           onPressed: _onLogin,
           color: Colors.lightBlueAccent,
-          child: Text('Log In', style: TextStyle(color: Colors.white)),
+          child: Text('Đăng nhập', style: TextStyle(color: Colors.white)),
         ),
       ),
     );
 
     final forgotLabel = FlatButton(
       child: Text(
-        'Forgot password?',
+        'Quên mật khẩu?',
         style: TextStyle(color: Colors.black54),
       ),
       onPressed: () {},

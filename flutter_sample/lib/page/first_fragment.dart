@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FirstFragment extends StatelessWidget {
-  final _key = '';
-
+   final _key = '';
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -30,7 +29,7 @@ class _FirstPageState extends State<FirstPage> {
   _loadCounter() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _key = (prefs.getString('counter'));
+      _key = (prefs.getString('name'));
     });
   }
 

@@ -13,15 +13,15 @@ class PhotoList {
 }
 
 class Photo {
-  final String Tong;
-  final String Ngay;
+  final String tong;
+  final String ngay;
 
-  Photo({this.Tong, this.Ngay});
+  Photo({this.tong, this.ngay});
 
   factory Photo.fromJson(Map<String, dynamic> json) {
     return new Photo(
-      Tong: json['Tong'].toString(),
-      Ngay: json['Ngay'],
+      tong: json['Tong'].toString(),
+      ngay: json['Ngay'],
     );
   }
 }

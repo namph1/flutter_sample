@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sample/page/first_fragment.dart';
 import 'package:flutter_sample/page/second_fragment.dart';
 import 'package:flutter_sample/page/third_fragment.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerItem {
   String title;
@@ -26,6 +27,21 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   int _selectedDrawerIndex = 0;
+  var username = "", email = "";
+
+  @override
+  void initState() {
+    super.initState();
+    initUser();
+  }
+
+  initUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      username = (prefs.getString('name'));
+      email = (prefs.getString('email'));
+    });
+  }
 
   _getDrawerItemWidget(int pos) {
     switch (pos) {
@@ -40,7 +56,7 @@ class HomePageState extends State<HomePage> {
         return new Text("Error");
     }
   }
-  
+
   _onSelectItem(int index) {
     setState(() => _selectedDrawerIndex = index);
     Navigator.of(context).pop(); // close the drawer
@@ -51,14 +67,12 @@ class HomePageState extends State<HomePage> {
     var drawerOptions = <Widget>[];
     for (var i = 0; i < widget.drawerItems.length; i++) {
       var d = widget.drawerItems[i];
-      drawerOptions.add(
-        new ListTile(
-          leading: new Icon(d.icon),
-          title: new Text(d.title),
-          selected: i == _selectedDrawerIndex,
-          onTap: () => _onSelectItem(i),
-        )
-      );
+      drawerOptions.add(new ListTile(
+        leading: new Icon(d.icon),
+        title: new Text(d.title),
+        selected: i == _selectedDrawerIndex,
+        onTap: () => _onSelectItem(i),
+      ));
     }
 
     return new Scaffold(
@@ -71,7 +85,13 @@ class HomePageState extends State<HomePage> {
         child: new Column(
           children: <Widget>[
             new UserAccountsDrawerHeader(
-                accountName: new Text("John Doe"), accountEmail: null),
+              accountName: new Text(username),
+              accountEmail: new Text(email),
+              currentAccountPicture: new CircleAvatar(
+                backgroundImage: AssetImage("assets/alucard.jpg"),
+                backgroundColor: Colors.white,
+              ),
+            ),
             new Column(children: drawerOptions)
           ],
         ),
