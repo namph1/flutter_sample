@@ -19,7 +19,7 @@ class FirstPage extends StatefulWidget {
 }
 
 class _FirstPageState extends State<FirstPage> {
-  var _key;
+  var _key = "";
 
   @override
   void initState() {
@@ -36,9 +36,7 @@ class _FirstPageState extends State<FirstPage> {
 
   @override
   Widget build(BuildContext context) {
-   return new Center(
-     child: Text(_key),
-   );
+   return new  Text(_key);
 
   }
 }
