@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
     LoginPage.tag: (context) => LoginPage(
           channel: channel,
         ),
-    HomePage.tag: (context) => HomePage(),
+    HomePage.tag: (context) => HomePage(channel: channel,),
   };
 
   @override

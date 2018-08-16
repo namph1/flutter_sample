@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter_sample/home_page.dart';
 import 'dart:convert';
-// import 'package:flutter_sample/model/test_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
@@ -78,6 +77,7 @@ class _LoginPageState extends State<LoginPage> {
       widget.channel.sink.add(json.encode(ojb.toMap()));
 
       widget.channel.stream.listen((content) {
+        print(content);
         List<LoginModel> users = UserList.fromJson(json.decode(content)).users;
         if (users.length == 1) {
           var user = users[0];
@@ -86,9 +86,6 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.of(context).pushNamed(HomePage.tag);
           });
         }
-        //   // PhotoList listPhoto = PhotoList.fromJson(json.decode(content));
-        //   // listPhoto.photos
-        //   //     .forEach((element) => print(element.Ngay + '-' + element.Tong));
       });
     }
 
