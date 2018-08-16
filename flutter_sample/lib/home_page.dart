@@ -3,6 +3,8 @@ import 'package:flutter_sample/page/first_fragment.dart';
 import 'package:flutter_sample/page/second_fragment.dart';
 import 'package:flutter_sample/page/third_fragment.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
+import 'package:flutter_sample/utils/share_pref_utils.dart';
 
 class DrawerItem {
   String title;
@@ -31,15 +33,22 @@ class HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    SharePreUtils shareUtils = new SharePreUtils();
+    shareUtils.getPref("name").then(intiUserName);
+    shareUtils.getPref("email").then(intiEmail);
     super.initState();
-    initUser();
   }
 
-  initUser() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  void intiUserName(String _username) {
     setState(() {
-      username = (prefs.getString('name'));
-      email = (prefs.getString('email'));
+      this.username = _username;
+    });
+  }
+
+  void intiEmail(String _email) {
+    setState(() {
+      this.email = _email;
     });
   }
 

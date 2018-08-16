@@ -6,7 +6,7 @@ import 'dart:convert';
 // import 'package:flutter_sample/model/test_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
-// import 'dart:async';
+import 'dart:async';
 import 'package:flutter_sample/utils/key.dart';
 import 'package:flutter_sample/model/login_model.dart';
 
@@ -59,17 +59,15 @@ class _LoginPageState extends State<LoginPage> {
       controller: passController,
     );
 
-    _storeUser(LoginModel user) async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.remove("token");
-      prefs.remove("email");
-      prefs.remove("name");
-      prefs.setString('token', user.key);
-      prefs.setString('email', user.email);
-      await prefs.setString('name', user.user);
+    Future<bool> saveUserInfo(LoginModel userInfo) async {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      pref.setString('token', userInfo.key);
+      pref.setString('email', userInfo.email);
+      pref.setString('name', userInfo.user);
+      return pref.commit();
     }
 
-    void _onLogin() async {
+    void _onLogin() {
       var ojb = new LoginModel(
         action: KeyUtils.loginaction,
         email: emailController.text,
@@ -81,19 +79,17 @@ class _LoginPageState extends State<LoginPage> {
 
       widget.channel.stream.listen((content) {
         List<LoginModel> users = UserList.fromJson(json.decode(content)).users;
-        print(users.length);
-        if(users.length == 1){
+        if (users.length == 1) {
           var user = users[0];
-          _storeUser(user);
+          saveUserInfo(user).then((bool commited) {
+            print(commited);
+            Navigator.of(context).pushNamed(HomePage.tag);
+          });
         }
-        print(UserList.fromJson(json.decode(content)).users.length);
-      //   // PhotoList listPhoto = PhotoList.fromJson(json.decode(content));
-      //   // listPhoto.photos
-      //   //     .forEach((element) => print(element.Ngay + '-' + element.Tong));
-      //   _storekey(content);
+        //   // PhotoList listPhoto = PhotoList.fromJson(json.decode(content));
+        //   // listPhoto.photos
+        //   //     .forEach((element) => print(element.Ngay + '-' + element.Tong));
       });
-
-      Navigator.of(context).pushNamed(HomePage.tag);
     }
 
     final loginButton = Padding(

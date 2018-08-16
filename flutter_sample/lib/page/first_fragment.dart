@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:flutter_sample/utils/share_pref_utils.dart';
 class FirstFragment extends StatelessWidget {
-   final _key = '';
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -18,24 +16,25 @@ class FirstPage extends StatefulWidget {
 }
 
 class _FirstPageState extends State<FirstPage> {
-  var _key = "";
+  var token = "";
 
   @override
   void initState() {
+    SharePreUtils sharePreUtils = new SharePreUtils();
+    sharePreUtils.getPref("token").then(initToken);
     super.initState();
-    _loadCounter();
   }
 
-  _loadCounter() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  void initToken(String _token) {
     setState(() {
-      _key = (prefs.getString('name'));
+      this.token = _token;
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
-   return new  Text(_key);
+   return new  Text(token);
 
   }
 }
