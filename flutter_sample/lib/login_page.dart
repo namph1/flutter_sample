@@ -20,11 +20,17 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final emailController = TextEditingController();
-  final passController = TextEditingController();
+  final emailController = TextEditingController(text: 'namph');
+
+  final passController = TextEditingController(text:  '123456a@A');
+
 
   @override
   Widget build(BuildContext context) {
+
+
+
+
     final logo = Hero(
       tag: 'hero',
       child: CircleAvatar(
@@ -48,7 +54,6 @@ class _LoginPageState extends State<LoginPage> {
 
     final password = TextField(
       autofocus: false,
-      // initialValue: 'some password',
       obscureText: true,
       decoration: InputDecoration(
         hintText: 'Password',
@@ -76,17 +81,25 @@ class _LoginPageState extends State<LoginPage> {
       );
       widget.channel.sink.add(json.encode(ojb.toMap()));
 
-      widget.channel.stream.listen((content) {
-        print(content);
-        List<LoginModel> users = UserList.fromJson(json.decode(content)).users;
-        if (users.length == 1) {
-          var user = users[0];
-          saveUserInfo(user).then((bool commited) {
-            print(commited);
-            Navigator.of(context).pushNamed(HomePage.tag);
-          });
-        }
-      });
+
+      Stream<dynamic> broad = widget.channel.stream.asBroadcastStream(
+        onListen: (content)=> print(content),
+      );
+      print('broad' + broad.isBroadcast.toString());
+      broad.listen((message) => print("class a: "+ message));
+       Navigator.of(context).pushNamed(HomePage.tag);
+      // widget.channel.stream.listen((content) {
+      //   print(content);
+      //   List<LoginModel> users = UserList.fromJson(json.decode(content)).users;
+      //   if (users.length == 1) {
+      //     var user = users[0];
+      //     saveUserInfo(user).then((bool commited) {
+      //       print(commited);
+      //       widget.channel.sink.close();
+      //       Navigator.of(context).pushNamed(HomePage.tag);
+      //     });
+      //   }
+      // });
     }
 
     final loginButton = Padding(

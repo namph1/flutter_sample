@@ -4,6 +4,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter_sample/model/sanluongchung_model.dart';
 import 'package:flutter_sample/utils/key.dart';
 import 'dart:convert';
+import 'dart:async';
 
 class FirstFragment extends StatelessWidget {
   final WebSocketChannel channel;
@@ -46,6 +47,8 @@ class _FirstPageState extends State<FirstPage> {
         action: KeyUtils.sanluongchungaction, key: "", user: users);
     widget.channel.sink.add(json.encode(obj.toMap()));
 
+    // Stream<dynamic> broad = widget.channel.stream.asBroadcastStream();
+    // broad.listen((message) => print("class b: "+message));
     // widget.channel.stream.listen((content) {
     //     SanLuongChungList sanluongs = SanLuongChungList.fromJson(json.decode(content));
     //       sanluongs.sanluongs
