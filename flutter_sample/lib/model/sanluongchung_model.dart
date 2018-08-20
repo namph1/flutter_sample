@@ -2,7 +2,7 @@ class SanLuong {
   final String action;
   final String key;
   final String user;
-  final double sanluong;
+  final int sanluong;
   final String ngay;
 
   SanLuong({this.action, this.key, this.user, this.sanluong, this.ngay});

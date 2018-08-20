@@ -3,7 +3,6 @@ import 'package:flutter_sample/page/first_fragment.dart';
 import 'package:flutter_sample/page/second_fragment.dart';
 import 'package:flutter_sample/page/third_fragment.dart';
 import 'package:flutter_sample/utils/share_pref_utils.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class DrawerItem {
   String title;
@@ -13,28 +12,23 @@ class DrawerItem {
 
 class HomePage extends StatefulWidget {
   static String tag = 'home-page';
-  final WebSocketChannel channel;
-
-  HomePage({Key key, @required this.channel}) : super(key: key);
 
   final drawerItems = [
     new DrawerItem("Trang chủ", Icons.home),
-    new DrawerItem("Fragment 2", Icons.local_pizza),
+    new DrawerItem("Khoán", Icons.local_pizza),
     new DrawerItem("Fragment 3", Icons.info)
   ];
 
   @override
   State<StatefulWidget> createState() {
-    return new HomePageState(channel: channel);
+    return new HomePageState();
   }
 }
 
 class HomePageState extends State<HomePage> {
   int _selectedDrawerIndex = 0;
   var username = "", email = "";
-  final WebSocketChannel channel;
 
-  HomePageState({Key keys, @required this.channel});
 
   @override
   void initState() {
@@ -59,9 +53,7 @@ class HomePageState extends State<HomePage> {
   _getDrawerItemWidget(int pos) {
     switch (pos) {
       case 0:
-        return new FirstFragment(
-          channel: channel,
-        );
+        return new FirstFragment();
       case 1:
         return new SecondFragment();
       case 2:
