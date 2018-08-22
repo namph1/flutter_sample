@@ -11,6 +11,7 @@ dependencies:
   shared_preferences: ^0.4.2
   rxdart: ^0.18.1
   intl: ^0.15.7
+  menu_swipe_helpers: ^0.4.1
   # http: ^0.11.3
 dev_dependencies:
   flutter_test:

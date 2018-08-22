@@ -5,6 +5,7 @@ import 'package:flutter_sample/model/sanluongchung_model.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:menu_swipe_helpers/menu_swipe_helpers.dart';
 
 class FirstFragment extends StatelessWidget {
   @override
@@ -20,7 +21,7 @@ class FirstPage extends StatefulWidget {
   _FirstPageState createState() => _FirstPageState();
 }
 
-class _FirstPageState extends State<FirstPage> {
+class _FirstPageState extends State<FirstPage> with DrawerStateMixin {
   var token = "", users = "";
   var ngayHD = 0,
       ngayDN = 0,
@@ -74,7 +75,7 @@ class _FirstPageState extends State<FirstPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildBody() {
     Widget buildListTile(String title, int sanluong) {
       return new ListTile(
           leading: new Icon(

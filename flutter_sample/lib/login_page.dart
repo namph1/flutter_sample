@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter_sample/home_page.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,20 +6,18 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:flutter_sample/utils/key.dart';
 import 'package:flutter_sample/model/login_model.dart';
+import 'package:web_socket_channel/io.dart';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
-  final WebSocketChannel channel;
-
-  LoginPage({Key key, @required this.channel}) : super(key: key);
 
   @override
   _LoginPageState createState() => new _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final emailController = TextEditingController(text: 'namph');
 
+  final emailController = TextEditingController(text: 'namph');
   final passController = TextEditingController(text: '123456a@A');
 
   @override
@@ -63,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
       pref.setString('token', userInfo.key);
       pref.setString('email', userInfo.email);
       pref.setString('name', userInfo.user);
-      return pref.commit();
+      return true;
     }
 
     void _onLogin() {
@@ -74,14 +70,16 @@ class _LoginPageState extends State<LoginPage> {
         pass: passController.text,
         key: '',
       );
-      widget.channel.sink.add(json.encode(ojb.toMap()));
+      var channel =
+          IOWebSocketChannel.connect("ws://" + KeyUtils.url + ":5001");
+      channel.sink.add(json.encode(ojb.toMap()));
 
-      widget.channel.stream.listen((content) {
+      channel.stream.listen((content) {
         List<LoginModel> users = UserList.fromJson(json.decode(content)).users;
         if (users.length == 1) {
           var user = users[0];
           saveUserInfo(user).then((bool commited) {
-            widget.channel.sink.close();
+            channel.sink.close();
             Navigator.of(context).pushNamed(HomePage.tag);
           });
         }

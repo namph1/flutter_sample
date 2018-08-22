@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:web_socket_channel/io.dart';
 import 'login_page.dart';
 import 'home_page.dart';
-import 'package:flutter_sample/utils/key.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  static final channel =
-      IOWebSocketChannel.connect("ws://" + KeyUtils.url + ":5001");
+
   final routes = <String, WidgetBuilder>{
-    LoginPage.tag: (context) => LoginPage(
-          channel: channel,
-        ),
+    LoginPage.tag: (context) => LoginPage(),
     HomePage.tag: (context) => HomePage(),
   };
 
@@ -25,7 +20,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.lightBlue,
         fontFamily: 'Nunito',
       ),
-      home: LoginPage(channel: channel),
+      home: LoginPage(),
       routes: routes,
     );
   }

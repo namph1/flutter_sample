@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_sample/model/khoan_model.dart';
 import 'package:flutter_sample/utils/key.dart';
 import 'package:flutter/foundation.dart';
+import 'package:menu_swipe_helpers/menu_swipe_helpers.dart';
 
 class SecondFragment extends StatelessWidget {
   @override
@@ -30,18 +31,70 @@ class KhoanPage extends StatefulWidget {
   _KhoanPageState createState() => _KhoanPageState();
 }
 
-class _KhoanPageState extends State<KhoanPage> {
+class _KhoanPageState extends State<KhoanPage> with DrawerStateMixin {
+
+
+
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: FutureBuilder<List<Khoan>>(
-        future: getKhoan(http.Client()),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) print(snapshot.error);
-          return snapshot.hasData
-              ? ListViewKhoan(khoans: snapshot.data)
-              : Center(child: CircularProgressIndicator());
-        },
+  Widget buildAppBar() {
+    return new AppBar(
+      title: new Text("Khoán sản lượng"),
+    );
+  }
+
+  @override
+  Widget buildBody() {
+    // return Container(
+    //   child: FutureBuilder<List<Khoan>>(
+    //     future: getKhoan(http.Client()),
+    //     builder: (context, snapshot) {
+    //       if (snapshot.hasError) print(snapshot.error);
+    //       return snapshot.hasData
+    //           ? ListViewKhoan(khoans: snapshot.data)
+    //           : Center(child: CircularProgressIndicator());
+    //     },
+    //   ),
+    // );
+
+    return new DefaultTabController(
+      length: 2,
+      child: new Scaffold(
+        body: new TabBarView(
+          children: [
+            Container(
+              color: Colors.white,
+              child: FutureBuilder<List<Khoan>>(
+                future: getKhoan(http.Client()),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) print(snapshot.error);
+                  return snapshot.hasData
+                      ? ListViewKhoan(khoans: snapshot.data)
+                      : Center(child: CircularProgressIndicator());
+                },
+              ),
+            ),
+            new Icon(
+              Icons.directions_bike,
+              size: 50.0,
+            ),
+          ],
+        ),
+        bottomNavigationBar: new TabBar(
+          tabs: <Widget>[
+            Tab(
+              text: "tháng 6/2018",
+            ),
+            Tab(
+              icon: new Icon(Icons.rss_feed),
+            ),
+          ],
+          labelColor: Colors.red,
+          unselectedLabelColor: Colors.blue,
+          indicatorSize: TabBarIndicatorSize.label,
+          indicatorPadding: EdgeInsets.all(5.0),
+          indicatorColor: Colors.blue,
+        ),
+        backgroundColor: Colors.black12,
       ),
     );
   }

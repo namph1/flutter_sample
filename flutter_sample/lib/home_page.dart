@@ -2,22 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sample/page/first_fragment.dart';
 import 'package:flutter_sample/page/second_fragment.dart';
 import 'package:flutter_sample/page/third_fragment.dart';
+import 'package:flutter_sample/page/dathang_page.dart';
 import 'package:flutter_sample/utils/share_pref_utils.dart';
-
-class DrawerItem {
-  String title;
-  IconData icon;
-  DrawerItem(this.title, this.icon);
-}
+import 'package:menu_swipe_helpers/menu_swipe_helpers.dart';
 
 class HomePage extends StatefulWidget {
   static String tag = 'home-page';
-
-  final drawerItems = [
-    new DrawerItem("Trang chủ", Icons.home),
-    new DrawerItem("Khoán", Icons.local_pizza),
-    new DrawerItem("Fragment 3", Icons.info)
-  ];
 
   @override
   State<StatefulWidget> createState() {
@@ -26,9 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  int _selectedDrawerIndex = 0;
-  var username = "", email = "";
-
+  String username = "", email = "";
 
   @override
   void initState() {
@@ -50,61 +38,50 @@ class HomePageState extends State<HomePage> {
     });
   }
 
-  _getDrawerItemWidget(int pos) {
-    switch (pos) {
-      case 0:
-        return new FirstFragment();
-      case 1:
-        return new SecondFragment();
-      case 2:
-        return new ThirdFragment();
+  static Widget _userAccountDrawer(BuildContext context) =>
+      new UserAccountsDrawerHeader(
+        accountName: new Text(""),
+        accountEmail: new Text("yann@fidelisa.com"),
+        currentAccountPicture: new CircleAvatar(
+          backgroundImage: AssetImage("assets/alucard.jpg"),
+          backgroundColor: Colors.white,
+        ),
+        margin: EdgeInsets.zero,
+      );
 
-      default:
-        return new Text("Error");
-    }
-  }
+  static final _firstPage = new DrawerDefinition(
+      title: "Trang chủ",
+      iconData: Icons.home,
+      widgetBuilder: (BuildContext context) => new FirstFragment());
 
-  _onSelectItem(int index) {
-    setState(() => _selectedDrawerIndex = index);
-    Navigator.of(context).pop(); // close the drawer
-  }
+  static final _secondPage = new DrawerDefinition(
+    title: "Khoán sản lượng",
+    iconData: Icons.store,
+    widgetBuilder: (BuildContext context) => new SecondFragment(),
+  );
+
+  static final _thirdPage = new DrawerDefinition(
+      title: "Đặt hàng",
+      iconData: Icons.email,
+      widgetBuilder: (BuildContext context) => new ThirdFragment());
+  static final _fourPage = new DrawerDefinition(
+      title: "Đặt hàng",
+      iconData: Icons.event_note,
+      widgetBuilder: (BuildContext context) => new DatHang_Page());
+
+  var _drawerBuilder = new DrawerHelper(
+    drawerContents: [_firstPage, _secondPage, _thirdPage, _fourPage],
+    userAccountsDrawerHeader: _userAccountDrawer,
+  );
 
   @override
   Widget build(BuildContext context) {
-    var drawerOptions = <Widget>[];
-    for (var i = 0; i < widget.drawerItems.length; i++) {
-      var d = widget.drawerItems[i];
-      drawerOptions.add(new ListTile(
-        leading: new Icon(d.icon),
-        title: new Text(d.title),
-        selected: i == _selectedDrawerIndex,
-        onTap: () => _onSelectItem(i),
-      ));
-    }
-
-    return new Scaffold(
-      appBar: new AppBar(
-        // here we display the title corresponding to the fragment
-        // you can instead choose to have a static title
-        title: new Text(widget.drawerItems[_selectedDrawerIndex].title),
+    return new MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: new DrawerProvider(
+        drawer: _drawerBuilder,
+        child: new FirstFragment(),
       ),
-      drawer: new Drawer(
-        child: new Column(
-          children: <Widget>[
-            new UserAccountsDrawerHeader(
-              accountName: new Text(username),
-              accountEmail: new Text(email),
-              currentAccountPicture: new CircleAvatar(
-                backgroundImage: AssetImage("assets/alucard.jpg"),
-                backgroundColor: Colors.white,
-              ),
-            ),
-            new Column(children: drawerOptions)
-          ],
-        ),
-      ),
-      body: _getDrawerItemWidget(_selectedDrawerIndex),
     );
-    // return new FirstFragment();
   }
 }

@@ -15,7 +15,8 @@ class SanLuong {
   }
 
   factory SanLuong.fromJson(Map<String, dynamic> json) {
-    return new SanLuong(sanluong: json['Tong'], ngay: json["Ngay"]);
+    return new SanLuong(sanluong: json["Tong"]
+    , ngay: json["Ngay"]);
   }
 }
 
