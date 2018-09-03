@@ -3,45 +3,30 @@ import 'package:flutter_sample/page/first_fragment.dart';
 import 'package:flutter_sample/page/second_fragment.dart';
 import 'package:flutter_sample/page/third_fragment.dart';
 import 'package:flutter_sample/page/dathang_page.dart';
-import 'package:flutter_sample/utils/share_pref_utils.dart';
 import 'package:menu_swipe_helpers/menu_swipe_helpers.dart';
+
+var name, emails;
 
 class HomePage extends StatefulWidget {
   static String tag = 'home-page';
+  final String user, email;
+
+  HomePage({Key key, this.user, this.email}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
+    name = this.user;
+    emails = this.email;
     return new HomePageState();
   }
 }
 
 class HomePageState extends State<HomePage> {
-  String username = "", email = "";
-
-  @override
-  void initState() {
-    SharePreUtils shareUtils = new SharePreUtils();
-    shareUtils.getPref("name").then(intiUserName);
-    shareUtils.getPref("email").then(intiEmail);
-    super.initState();
-  }
-
-  void intiUserName(String _username) {
-    setState(() {
-      this.username = _username;
-    });
-  }
-
-  void intiEmail(String _email) {
-    setState(() {
-      this.email = _email;
-    });
-  }
 
   static Widget _userAccountDrawer(BuildContext context) =>
       new UserAccountsDrawerHeader(
-        accountName: new Text(""),
-        accountEmail: new Text("yann@fidelisa.com"),
+        accountName: new Text(name),
+        accountEmail: new Text(emails),
         currentAccountPicture: new CircleAvatar(
           backgroundImage: AssetImage("assets/alucard.jpg"),
           backgroundColor: Colors.white,
@@ -67,7 +52,7 @@ class HomePageState extends State<HomePage> {
   static final _fourPage = new DrawerDefinition(
       title: "Đặt hàng",
       iconData: Icons.event_note,
-      widgetBuilder: (BuildContext context) => new DatHang_Page());
+      widgetBuilder: (BuildContext context) => new DatHangScreen());
 
   var _drawerBuilder = new DrawerHelper(
     drawerContents: [_firstPage, _secondPage, _thirdPage, _fourPage],

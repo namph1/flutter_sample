@@ -16,7 +16,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   final emailController = TextEditingController(text: 'namph');
   final passController = TextEditingController(text: '123456a@A');
 
@@ -59,6 +58,7 @@ class _LoginPageState extends State<LoginPage> {
       pref.setString('token', userInfo.key);
       pref.setString('email', userInfo.email);
       pref.setString('name', userInfo.user);
+      pref.setString("code", userInfo.code);
       return true;
     }
 
@@ -80,7 +80,15 @@ class _LoginPageState extends State<LoginPage> {
           var user = users[0];
           saveUserInfo(user).then((bool commited) {
             channel.sink.close();
-            Navigator.of(context).pushNamed(HomePage.tag);
+            // Navigator.of(context).pushNamed(HomePage.tag);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomePage(
+                        user: user.user,
+                        email: user.email,
+                      ),
+                ));
           });
         }
       });

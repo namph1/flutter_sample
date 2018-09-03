@@ -4,14 +4,18 @@ class LoginModel {
   final String email;
   final String action;
   final String key;
+  final String code;
 
-  LoginModel({this.user, this.pass, this.email, this.action, this.key});
+  LoginModel({this.user, this.pass, this.email, this.action, this.key, this.code});
 
   factory LoginModel.fromJson(Map<String, dynamic> json) {
     return new LoginModel(
         user: json['TEN_NHAN_VIEN'].toString(),
         key: json["token"],
-        email: json["e_mail"]);
+        email: json["e_mail"],
+        code: json["MNVTT"],
+        );
+
   }
 
   Map<String, dynamic> toMap() {

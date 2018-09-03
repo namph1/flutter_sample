@@ -10,11 +10,11 @@ import 'package:menu_swipe_helpers/menu_swipe_helpers.dart';
 class SecondFragment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return new Container(child: new KhoanPage());
   }
 }
 
+//===========================================================================
 Future<List<Khoan>> getKhoan(http.Client client) async {
   final response = await client.get('http://' + KeyUtils.url + ':5000/khoan');
   return compute(parseKhoan, response.body);
@@ -26,15 +26,24 @@ List<Khoan> parseKhoan(String responseBody) {
   return parsed.map<Khoan>((jsons) => Khoan.fromJson(jsons)).toList();
 }
 
+//=============================================================================
+Future<List<DMKhoan>> getDmKhoan(http.Client client) async {
+  final response = await client.get('http://' + KeyUtils.url + ':5000/dmkhoan');
+  return compute(parseDmKhoan, response.body);
+}
+
+List<DMKhoan> parseDmKhoan(String responseBody) {
+  final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
+  return parsed.map<DMKhoan>((jsons) => DMKhoan.fromJson(jsons)).toList();
+}
+
+//=============================================================================
 class KhoanPage extends StatefulWidget {
   @override
   _KhoanPageState createState() => _KhoanPageState();
 }
 
 class _KhoanPageState extends State<KhoanPage> with DrawerStateMixin {
-
-
-
   @override
   Widget buildAppBar() {
     return new AppBar(
@@ -42,22 +51,23 @@ class _KhoanPageState extends State<KhoanPage> with DrawerStateMixin {
     );
   }
 
+  List<Widget> _buildTab() {
+    List<Widget> list = new List();   
+
+    list.add(new Tab(
+      text: "Tháng 7/2018",
+    ));
+    list.add(new Tab(
+      text: "Tháng 6/2018",
+    ));    
+
+    return list;
+  }
+
   @override
   Widget buildBody() {
-    // return Container(
-    //   child: FutureBuilder<List<Khoan>>(
-    //     future: getKhoan(http.Client()),
-    //     builder: (context, snapshot) {
-    //       if (snapshot.hasError) print(snapshot.error);
-    //       return snapshot.hasData
-    //           ? ListViewKhoan(khoans: snapshot.data)
-    //           : Center(child: CircularProgressIndicator());
-    //     },
-    //   ),
-    // );
-
     return new DefaultTabController(
-      length: 2,
+      length: 7,
       child: new Scaffold(
         body: new TabBarView(
           children: [
@@ -80,14 +90,7 @@ class _KhoanPageState extends State<KhoanPage> with DrawerStateMixin {
           ],
         ),
         bottomNavigationBar: new TabBar(
-          tabs: <Widget>[
-            Tab(
-              text: "tháng 6/2018",
-            ),
-            Tab(
-              icon: new Icon(Icons.rss_feed),
-            ),
-          ],
+          tabs: this._buildTab(),
           labelColor: Colors.red,
           unselectedLabelColor: Colors.blue,
           indicatorSize: TabBarIndicatorSize.label,
@@ -131,7 +134,7 @@ class ListViewKhoan extends StatelessWidget {
                     ),
                   ),
                   trailing: new Text(
-                    '${khoans[position].sotan}',
+                    '${khoans[position].sotan} tấn',
                     style: TextStyle(color: Colors.red, fontSize: 25.0),
                   ),
                   onTap: () => _onTapItem(context, khoans[position]),

@@ -7,8 +7,9 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class DatHang_Page extends StatelessWidget {
+class DatHangScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -19,8 +20,10 @@ class DatHang_Page extends StatelessWidget {
 }
 
 Future<List<DonDatHang>> getKhoan(http.Client client) async {
-  final response =
-      await client.get('http://' + KeyUtils.url + ':5000/dondathang');
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  var manvtt = pref.getString("code");
+  final response = await client
+      .get('http://' + KeyUtils.url + ':5000/dondathang?mnvtt=' + manvtt);
   return compute(parseKhoan, response.body);
 }
 
