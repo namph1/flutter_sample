@@ -50,7 +50,7 @@ class HomePageState extends State<HomePage> {
       iconData: Icons.email,
       widgetBuilder: (BuildContext context) => new ThirdFragment());
   static final _fourPage = new DrawerDefinition(
-      title: "Đặt hàng",
+      title: "Đơn hàng",
       iconData: Icons.event_note,
       widgetBuilder: (BuildContext context) => new DatHangScreen());
 
