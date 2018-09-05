@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_sample/model/daily_model.dart';
 import 'dart:convert';
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 class ThirdFragment extends StatelessWidget {
@@ -21,7 +22,7 @@ Future<List<DaiLy>> getDaiLy(http.Client client) async {
   SharedPreferences pref = await SharedPreferences.getInstance();
   var manvtt = pref.getString("code");
   final response = await client.get(
-      'http://' + KeyUtils.url + ':5000/getdailytheotiepthi?mnvtt=' + manvtt);
+      'http://' + KeyUtils.url + ':5000/getdailytheotiepthi?manv=' + manvtt);
   return compute(parseDaiLy, response.body);
 }
 
@@ -37,31 +38,6 @@ class SanPhamPage extends StatefulWidget {
 }
 
 class _SanPhamPageState extends State<SanPhamPage> with DrawerStateMixin {
-  // List _cities = ["Select"];
-
-  // @override
-  // void initState() {
-  //   _dropDownMenuItems = getDropDownMenuItems();
-  //   _currentCity = _dropDownMenuItems[0].value;
-  //   super.initState();
-  // }
-
-  // List<DropdownMenuItem<String>> getDropDownMenuItems() {
-  //   List<DropdownMenuItem<String>> items = new List();
-  //   for (String city in _cities) {
-  //     items.add(new DropdownMenuItem(
-  //         value: city,
-  //         child: new Text(
-  //           city,
-  //           style: TextStyle(color: Colors.blue, fontSize: 20.0),
-  //         )));
-  //   }
-  //   return items;
-  // }
-
-  // List<DropdownMenuItem<String>> _dropDownMenuItems;
-  // String _currentCity;
-
   @override
   Widget buildFloatingButton() {
     return new FloatingActionButton(
@@ -73,12 +49,6 @@ class _SanPhamPageState extends State<SanPhamPage> with DrawerStateMixin {
 
   @override
   buildBody() {
-    // void changedDropDownItem(String selectedCity) {
-    //   setState(() {
-    //     _currentCity = selectedCity;
-    //   });
-    // }
-
     return new Container(
       child: FutureBuilder<List<DaiLy>>(
         future: getDaiLy(http.Client()),
@@ -91,12 +61,14 @@ class _SanPhamPageState extends State<SanPhamPage> with DrawerStateMixin {
               lstDrop.add(new DropdownMenuItem(
                 value: ele.code,
                 child: new Text(
-                  ele.fullName,
+                  ele.code,
                   style: TextStyle(color: Colors.blue, fontSize: 20.0),
                 ),
               ));
             });
-            return Page(dropDownMenuItems: lstDrop,);
+            return PageDrop(
+              dropDownMenuItems: lstDrop,
+            );
           }
           return CircularProgressIndicator();
         },
@@ -105,10 +77,57 @@ class _SanPhamPageState extends State<SanPhamPage> with DrawerStateMixin {
   }
 }
 
-class Page extends StatelessWidget {
+class PageDrop extends StatefulWidget {
   final List<DropdownMenuItem<String>> dropDownMenuItems;
 
-  Page({Key key, this.dropDownMenuItems}) : super(key: key);
+  PageDrop({this.dropDownMenuItems});
+
+  PageDropState createState() =>
+      PageDropState(dropDownMenuItems: dropDownMenuItems);
+}
+
+class PageDropState extends State<PageDrop> {
+  final List<DropdownMenuItem<String>> dropDownMenuItems;
+
+  PageDropState({Key key, this.dropDownMenuItems});
+
+  String selectvalue;
+  List list = new List();
+  void fetchData(String madt) {
+    getData(madt).then((res) {
+      setState(() {
+        list.addAll(res);
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    selectvalue = dropDownMenuItems.first.value;
+    super.initState();
+  }
+
+  void changedDropDownItem(String selectedCity) {
+    setState(() {
+      selectvalue = selectedCity;
+    });
+    fetchData(selectedCity);
+  }
+
+  Future<List> getData(String madt) async {
+    var url = 'http://' + KeyUtils.url + ':5000/dshanghoadaily?madt=' + madt;
+    List data = new List();
+    var httpClient = new HttpClient();
+    var request = await httpClient.getUrl(Uri.parse(url));
+    var response = await request.close();
+    if (response.statusCode == HttpStatus.OK) {
+      var jsonString = await response.transform(utf8.decoder).join();
+      data = json.decode(jsonString);
+      return data;
+    } else {
+      return data;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +136,8 @@ class Page extends StatelessWidget {
         children: <Widget>[
           new Container(
             child: new Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 new Text(
                   "Đại lý: ",
@@ -127,50 +147,74 @@ class Page extends StatelessWidget {
                   padding: new EdgeInsets.all(16.0),
                 ),
                 new DropdownButton(
-                  value: "dropDownMenuItems[0].value",
+                  value: selectvalue,
                   items: dropDownMenuItems,
-                  // onChanged: changedDropDownItem,
+                  onChanged: changedDropDownItem,
                 ),
               ],
             ),
           ),
           new Divider(),
           new Expanded(
-            child: ListView(
-              children: <Widget>[
-                new ListTile(
-                  title: Text('签名'),
-                  trailing: new Container(
-                    width: 150.0,
-                    child: new Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        new Expanded(
-                          flex: 3,
-                          child: new TextField(
-                            textAlign: TextAlign.end,
-                            style: new TextStyle(
-                                color: Colors.red, fontSize: 20.0),
-                            decoration: new InputDecoration.collapsed(
-                                hintText: 'userAddr'),
-                          ),
+              child: ListView.builder(
+            itemCount: list.length,
+            itemBuilder: ((BuildContext _context, int position) {
+              return new ListTile(
+                leading: new Text('${position+1}- ' + list[position]['TenFull']),
+                trailing:  new Container(
+                  child: new Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      new Expanded(
+                        child: new TextField(
+                          textAlign: TextAlign.end,
+                          style: TextStyle(color: Colors.red, fontSize: 20.0),
+                          decoration: new InputDecoration.collapsed(
+                              hintText: '0'),
+                          
                         ),
-                        new Expanded(
-                          child: new IconButton(
-                            icon: new Icon(Icons.chevron_right),
-                            color: Colors.black26,
-                            onPressed: () {},
-                          ),
-                        )
-                      ],
-                    ),
+                      )
+                    ],
                   ),
-                )
-              ],
-            ),
-          )
+                ),
+              );
+            }),
+          )),
         ],
       ),
     );
   }
 }
+
+// child: ListView(
+//               children: <Widget>[
+//                 new ListTile(
+//                   title: Text('签名'),
+//                   trailing: new Container(
+//                     width: 150.0,
+//                     child: new Row(
+//                       mainAxisAlignment: MainAxisAlignment.end,
+//                       children: <Widget>[
+//                         new Expanded(
+//                           flex: 3,
+//                           child: new TextField(
+//                             textAlign: TextAlign.end,
+//                             style: new TextStyle(
+//                                 color: Colors.red, fontSize: 20.0),
+//                             decoration: new InputDecoration.collapsed(
+//                                 hintText: 'userAddr'),
+//                           ),
+//                         ),
+//                         new Expanded(
+//                           child: new IconButton(
+//                             icon: new Icon(Icons.chevron_right),
+//                             color: Colors.black26,
+//                             onPressed: () {},
+//                           ),
+//                         )
+//                       ],
+//                     ),
+//                   ),
+//                 )
+//               ],
+//             ),
