@@ -4,10 +4,12 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_sample/utils/key.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_sample/model/daily_model.dart';
+import 'package:flutter_sample/model/donhang_model.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:web_socket_channel/io.dart';
 
 class ThirdFragment extends StatelessWidget {
   @override
@@ -41,10 +43,22 @@ class _SanPhamPageState extends State<SanPhamPage> with DrawerStateMixin {
   @override
   Widget buildFloatingButton() {
     return new FloatingActionButton(
-        child: new Icon(Icons.check),
-        onPressed: () => {
-              //TODO not implemented
-            });
+      child: new Icon(Icons.check),
+      onPressed: luuDonHang,
+    );
+  }
+
+  void luuDonHang() {
+
+    var obj = new DonHang_Model(
+      action: KeyUtils.donhangaction,
+      makh: makh,
+      lstHangHoa: mapsp,
+      key: '',
+    );
+    var channel = IOWebSocketChannel.connect("ws://" + KeyUtils.url + ":5001");
+    channel.sink.add(json.encode(obj.toMap()));
+    channel.sink.close();
   }
 
   @override
@@ -77,6 +91,9 @@ class _SanPhamPageState extends State<SanPhamPage> with DrawerStateMixin {
   }
 }
 
+Map<String, String> mapsp = new Map();
+String makh;
+
 class PageDrop extends StatefulWidget {
   final List<DropdownMenuItem<String>> dropDownMenuItems;
 
@@ -93,9 +110,11 @@ class PageDropState extends State<PageDrop> {
 
   String selectvalue;
   List list = new List();
+
   void fetchData(String madt) {
     getData(madt).then((res) {
       setState(() {
+        list.clear();
         list.addAll(res);
       });
     });
@@ -110,6 +129,7 @@ class PageDropState extends State<PageDrop> {
   void changedDropDownItem(String selectedCity) {
     setState(() {
       selectvalue = selectedCity;
+      makh = selectedCity;
     });
     fetchData(selectedCity);
   }
@@ -160,8 +180,9 @@ class PageDropState extends State<PageDrop> {
             itemCount: list.length,
             itemBuilder: ((BuildContext _context, int position) {
               return new ListTile(
-                leading: new Text('${position+1}- ' + list[position]['TenFull']),
-                trailing:  new Container(
+                leading:
+                    new Text('${position + 1}- ' + list[position]['TenFull']),
+                trailing: new Container(
                   child: new Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
@@ -169,9 +190,13 @@ class PageDropState extends State<PageDrop> {
                         child: new TextField(
                           textAlign: TextAlign.end,
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
-                          decoration: new InputDecoration.collapsed(
-                              hintText: '0'),
-                          
+                          decoration:
+                              new InputDecoration.collapsed(hintText: '0'),
+                          keyboardType: TextInputType.number,
+                          onChanged: (text) {
+                            var key = list[position]["MATP"];
+                            mapsp[key] = text;
+                          },
                         ),
                       )
                     ],
