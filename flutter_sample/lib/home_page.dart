@@ -3,6 +3,7 @@ import 'package:flutter_sample/page/first_fragment.dart';
 import 'package:flutter_sample/page/second_fragment.dart';
 import 'package:flutter_sample/page/third_fragment.dart';
 import 'package:flutter_sample/page/dathang_page.dart';
+import 'package:flutter_sample/page/congno_page.dart';
 import 'package:menu_swipe_helpers/menu_swipe_helpers.dart';
 
 var name, emails;
@@ -54,8 +55,18 @@ class HomePageState extends State<HomePage> {
       iconData: Icons.event_note,
       widgetBuilder: (BuildContext context) => new DatHangScreen());
 
+  static final _khoTP = new DrawerDefinition(
+      title: "Kho Thành phẩm",
+      iconData: Icons.atm,
+      widgetBuilder: (BuildContext context) => new DatHangScreen());
+
+  static final _congNo = new DrawerDefinition(
+      title: "Công nợ",
+      iconData: Icons.euro_symbol,
+      widgetBuilder: (BuildContext context) => new CongNoScreen());
+
   var _drawerBuilder = new DrawerHelper(
-    drawerContents: [_firstPage, _secondPage, _thirdPage, _fourPage],
+    drawerContents: [_firstPage, _secondPage, _thirdPage, _fourPage, _khoTP, _congNo],
     userAccountsDrawerHeader: _userAccountDrawer,
   );
 

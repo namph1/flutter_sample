@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:menu_swipe_helpers/menu_swipe_helpers.dart';
-import 'package:flutter_sample/model/dondathang_model.dart';
 import 'package:flutter_sample/utils/key.dart';
+import 'package:flutter_sample/model/congno_model.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
@@ -9,45 +9,49 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class DatHangScreen extends StatelessWidget {
+class CongNoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Container(
-      child: new DatHangPage(),
+      child: new CongNoPage(),
     );
   }
 }
 
-Future<List<DonDatHang>> getKhoan(http.Client client) async {
+Future<List<CongNoModel>> getKhoan(http.Client client) async {
   SharedPreferences pref = await SharedPreferences.getInstance();
   var manvtt = pref.getString("code");
-  final response = await client
-      .get('http://' + KeyUtils.url + ':5000/dondathang?mnvtt=' + manvtt);
+  final response = await client.get('http://' +
+      KeyUtils.url +
+      ':5000/getcongnohientaitonghop?manv=' +
+      manvtt);
   return compute(parseKhoan, response.body);
 }
 
-List<DonDatHang> parseKhoan(String responseBody) {
+List<CongNoModel> parseKhoan(String responseBody) {
   final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
 
-  return parsed.map<DonDatHang>((jsons) => DonDatHang.fromJson(jsons)).toList();
+  return parsed
+      .map<CongNoModel>((jsons) => CongNoModel.fromJson(jsons))
+      .toList();
 }
 
-class DatHangPage extends StatefulWidget {
-  @override
-  _DatHangPageState createState() => _DatHangPageState();
+class CongNoPage extends StatefulWidget {
+  CongNoPageState createState() => CongNoPageState();
 }
 
-class _DatHangPageState extends State<DatHangPage> with DrawerStateMixin {
+class CongNoPageState extends State<CongNoPage> with DrawerStateMixin {
   @override
   Widget buildAppBar() {
     return new AppBar(
-      title: new Text("Đơn hàng"),
+      title: new Text("Công nợ"),
     );
   }
-  
-  Widget _buildBody() {
+
+  @override
+  Widget buildBody() {
     return Container(
-      child: FutureBuilder<List<DonDatHang>>(
+      child: FutureBuilder<List<CongNoModel>>(
         future: getKhoan(http.Client()),
         builder: (context, snapshot) {
           if (snapshot.hasError) print(snapshot.error);
@@ -58,40 +62,11 @@ class _DatHangPageState extends State<DatHangPage> with DrawerStateMixin {
       ),
     );
   }
-
-  @override
-  Widget buildBody() {
-    return new DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        bottomNavigationBar: new TabBar(
-          tabs: <Widget>[
-            Tab(
-              text: "Chưa xuất",
-            ),
-            Tab(
-              text: "Đã xuất",
-            ),
-          ],
-          labelColor: Colors.red,
-          unselectedLabelColor: Colors.blue,
-          indicatorSize: TabBarIndicatorSize.label,
-          indicatorPadding: EdgeInsets.all(5.0),
-          indicatorColor: Colors.blue,
-        ),
-        body: new TabBarView(
-          children: <Widget>[
-            _buildBody(),
-            Icon(Icons.directions_bus),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
+//------------------------------------------------
 class ListViewKhoan extends StatelessWidget {
-  final List<DonDatHang> khoans;
+  final List<CongNoModel> khoans;
 
   ListViewKhoan({Key key, this.khoans}) : super(key: key);
 
@@ -122,8 +97,7 @@ class ListViewKhoan extends StatelessWidget {
                   ),
                   trailing: new Column(
                     children: <Widget>[
-                      new Text('${f.format(khoans[position].sotien)}'),
-                      new Text('${f.format(khoans[position].sokg)}'),
+                      new Text('${f.format(khoans[position].sono)}'),
                     ],
                   ),
                   onTap: () => _onTapItem(context, khoans[position]),
@@ -134,10 +108,11 @@ class ListViewKhoan extends StatelessWidget {
     );
   }
 
-  void _onTapItem(BuildContext context, DonDatHang post) {
+  void _onTapItem(BuildContext context, CongNoModel post) {
     Scaffold.of(context).showSnackBar(new SnackBar(
         backgroundColor: Colors.red,
         content:
-            new Text(post.so.toString() + ' - ' + post.sotien.toString())));
+            new Text(post.madt.toString() + ' - ' + post.sono.toString())));
   }
 }
+

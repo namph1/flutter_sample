@@ -1,10 +1,10 @@
-class DonHang_Model {
+class DonHangModel {
   final String makh;
   final Map<String, String> lstHangHoa;
   final String action;
   final String key;
 
-  DonHang_Model({this.makh, this.lstHangHoa, this.action, this.key});
+  DonHangModel({this.makh, this.lstHangHoa, this.action, this.key});
 
   Map<String, dynamic> toMap() {
     return {

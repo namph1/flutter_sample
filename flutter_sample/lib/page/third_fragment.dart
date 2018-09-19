@@ -41,16 +41,22 @@ class SanPhamPage extends StatefulWidget {
 
 class _SanPhamPageState extends State<SanPhamPage> with DrawerStateMixin {
   @override
-  Widget buildFloatingButton() {
-    return new FloatingActionButton(
-      child: new Icon(Icons.check),
-      onPressed: luuDonHang,
+  Widget buildAppBar() {
+    return new AppBar(
+      title: new Text("Đặt hàng"),
     );
   }
 
-  void luuDonHang() {
+  @override
+  Widget buildFloatingButton() {
+    return new FloatingActionButton(
+      child: new Icon(Icons.check),
+      onPressed: this.luuDonHang,
+    );
+  }
 
-    var obj = new DonHang_Model(
+  void sendDonHangToServer() {
+    var obj = new DonHangModel(
       action: KeyUtils.donhangaction,
       makh: makh,
       lstHangHoa: mapsp,
@@ -61,8 +67,82 @@ class _SanPhamPageState extends State<SanPhamPage> with DrawerStateMixin {
     channel.sink.close();
   }
 
+  List<Widget> _buildContentDialog() {
+    List<Widget> list = new List();
+    mapsp.forEach((key, value) {
+      list.add(new Text('${key.split("-")[1]} : ${value}'));
+    });
+    return list;
+  }
+
+  void luuDonHang() {
+    int countSp = mapsp.length;
+    if (countSp > 0) {
+      showDialog(
+        context: context,
+        child: new AlertDialog(
+          title: new Text("Mặt hàng đã chọn"),
+          content: new SingleChildScrollView(
+            child: new ListBody(
+              children: this._buildContentDialog(),
+            ),
+          ),
+          actions: <Widget>[
+            new FlatButton(
+              child: Text(
+                "Hủy",
+                style: TextStyle(color: Colors.white),
+              ),
+              color: Colors.red,
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop('dialog');
+              },
+            ),
+            new FlatButton(
+              child: Text(
+                "Lưu",
+                style: TextStyle(color: Colors.white),
+              ),
+              color: Colors.blue,
+              onPressed: () {
+                // sendDonHangToServer();
+                Navigator.of(context, rootNavigator: true).pop('dialog');
+              },
+            ),
+          ],
+        ),
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          // return object of type Dialog
+          return AlertDialog(
+            title: new Icon(
+              Icons.error,
+            ),
+            content: new Text("Chưa chọn mặt hàng"),
+            actions: <Widget>[
+              new FlatButton(
+                child: new Text(
+                  "Đóng",
+                  style: TextStyle(color: Colors.white),
+                ),
+                color: Colors.red,
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).pop('dialog');
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
   @override
   buildBody() {
+    mapsp.clear();
     return new Container(
       child: FutureBuilder<List<DaiLy>>(
         future: getDaiLy(http.Client()),
@@ -140,7 +220,7 @@ class PageDropState extends State<PageDrop> {
     var httpClient = new HttpClient();
     var request = await httpClient.getUrl(Uri.parse(url));
     var response = await request.close();
-    if (response.statusCode == HttpStatus.OK) {
+    if (response.statusCode == 200) {
       var jsonString = await response.transform(utf8.decoder).join();
       data = json.decode(jsonString);
       return data;
@@ -194,8 +274,12 @@ class PageDropState extends State<PageDrop> {
                               new InputDecoration.collapsed(hintText: '0'),
                           keyboardType: TextInputType.number,
                           onChanged: (text) {
-                            var key = list[position]["MATP"];
-                            mapsp[key] = text;
+                            var count = int.parse(text);
+                            if (count > 0) {
+                              var key =
+                                  '${list[position]["MATP"]}-${list[position]["TenFull"]}';
+                              mapsp[key] = text;
+                            }
                           },
                         ),
                       )
