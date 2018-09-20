@@ -4,6 +4,7 @@ import 'package:flutter_sample/page/second_fragment.dart';
 import 'package:flutter_sample/page/third_fragment.dart';
 import 'package:flutter_sample/page/dathang_page.dart';
 import 'package:flutter_sample/page/congno_page.dart';
+import 'package:flutter_sample/page/bieudo.dart';
 import 'package:menu_swipe_helpers/menu_swipe_helpers.dart';
 
 var name, emails;
@@ -58,7 +59,7 @@ class HomePageState extends State<HomePage> {
   static final _khoTP = new DrawerDefinition(
       title: "Kho Thành phẩm",
       iconData: Icons.atm,
-      widgetBuilder: (BuildContext context) => new DatHangScreen());
+      widgetBuilder: (BuildContext context) => new BieuDoScreen());
 
   static final _congNo = new DrawerDefinition(
       title: "Công nợ",
