@@ -52,54 +52,105 @@ class _KhoanPageState extends State<KhoanPage> with DrawerStateMixin {
   }
 
   List<Widget> _buildTab() {
-    List<Widget> list = new List();   
+    List<Widget> list = new List();
 
     list.add(new Tab(
       text: "Tháng 7/2018",
     ));
     list.add(new Tab(
       text: "Tháng 6/2018",
-    ));    
+    ));
 
     return list;
   }
 
+  // @override
+  // Widget buildBody() {
+  //   return new DefaultTabController(
+  //     length: 7,
+  //     child: new Scaffold(
+  //       body: new TabBarView(
+  //         children: [
+  //           Container(
+  //             color: Colors.white,
+  //             child: FutureBuilder<List<Khoan>>(
+  //               future: getKhoan(http.Client()),
+  //               builder: (context, snapshot) {
+  //                 if (snapshot.hasError) print(snapshot.error);
+  //                 return snapshot.hasData
+  //                     ? ListViewKhoan(khoans: snapshot.data)
+  //                     : Center(child: CircularProgressIndicator());
+  //               },
+  //             ),
+  //           ),
+  //           new Icon(
+  //             Icons.directions_bike,
+  //             size: 50.0,
+  //           ),
+  //         ],
+  //       ),
+  //       bottomNavigationBar: new TabBar(
+  //         tabs: this._buildTab(),
+  //         labelColor: Colors.red,
+  //         unselectedLabelColor: Colors.blue,
+  //         indicatorSize: TabBarIndicatorSize.label,
+  //         indicatorPadding: EdgeInsets.all(5.0),
+  //         indicatorColor: Colors.blue,
+  //       ),
+  //       backgroundColor: Colors.black12,
+  //     ),
+  //   );
+  // }
+
+  int _curIndex = 0;
+
   @override
   Widget buildBody() {
-    return new DefaultTabController(
-      length: 7,
-      child: new Scaffold(
-        body: new TabBarView(
-          children: [
-            Container(
-              color: Colors.white,
-              child: FutureBuilder<List<Khoan>>(
-                future: getKhoan(http.Client()),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) print(snapshot.error);
-                  return snapshot.hasData
-                      ? ListViewKhoan(khoans: snapshot.data)
-                      : Center(child: CircularProgressIndicator());
-                },
-              ),
-            ),
-            new Icon(
-              Icons.directions_bike,
-              size: 50.0,
-            ),
-          ],
-        ),
-        bottomNavigationBar: new TabBar(
-          tabs: this._buildTab(),
-          labelColor: Colors.red,
-          unselectedLabelColor: Colors.blue,
-          indicatorSize: TabBarIndicatorSize.label,
-          indicatorPadding: EdgeInsets.all(5.0),
-          indicatorColor: Colors.blue,
-        ),
-        backgroundColor: Colors.black12,
+    return new Scaffold(
+      bottomNavigationBar: new BottomNavigationBar(
+        currentIndex: _curIndex,
+        onTap: (index) {
+          _curIndex = index;
+          setState(() {});
+        },        
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), 
+          title: Text("Home"), backgroundColor: Colors.white10),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings), title: Text("Setting"), backgroundColor: Colors.white10),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings), title: Text("Setting"), backgroundColor: Colors.white10),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings), title: Text("Setting"), backgroundColor: Colors.white10)
+        ],
+      ),
+      body: new Center(
+        child: _getWidget(),
       ),
     );
+  }
+
+  Widget _getWidget() {
+    switch (_curIndex) {
+      case 0:
+        return Container(
+            // color: Colors.red,
+            child: FutureBuilder<List<Khoan>>(
+              future: getKhoan(http.Client()),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) print(snapshot.error);
+                return snapshot.hasData
+                    ? ListViewKhoan(khoans: snapshot.data)
+                    : Center(child: CircularProgressIndicator());
+              },
+            ));
+        break;
+      default:
+        return Container(
+          child: new Icon(Icons.directions_bike),
+        );
+        break;
+    }
   }
 }
 

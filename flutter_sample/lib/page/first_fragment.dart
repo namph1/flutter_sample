@@ -147,5 +147,144 @@ class _FirstPageState extends State<FirstPage> with DrawerStateMixin {
             thangDN)
       ],
     );
+
+    // return new Column(
+
+    //   children: <Widget>[
+    //     new Expanded(
+    //       child: CardWidget(
+    //         titleLocation: "Hải Dương",
+    //         slNgay: ngayHD,
+    //         slThang: thangHD,
+    //       ),
+    //     ),
+    //     new Expanded(
+    //       child: CardWidget(
+    //         titleLocation: "Hải Dương",
+    //         slNgay: ngayHD,
+    //         slThang: thangHD,
+    //       ),
+    //     ),
+    //   ],
+    // );
+
+    // return new Container(
+    //   margin: EdgeInsets.only(top: 10.0),
+    //   child: CardWidget(
+    //     titleLocation: "Hải Dương",
+    //     slNgay: ngayHD,
+    //     slThang: thangHD,
+    //   ),
+    // );
+  }
+}
+
+class CardWidget extends StatelessWidget {
+  final String titleLocation;
+  final dynamic slNgay;
+  final dynamic slThang;
+
+  CardWidget({this.titleLocation, this.slNgay, this.slThang});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          image: DecorationImage(
+        image: AssetImage("image/bg_purple_card.png"),
+        fit: BoxFit.fitWidth,
+      )),
+      child: Column(
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 60.0, right: 16.0),
+                    child: Text(
+                      'BALANCE',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10.0,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: Text(
+                      '\$ $slNgay',
+                      style: TextStyle(
+                          color: Colors.white,
+//                        fontSize: 10.0,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Expanded(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Text(
+                  titleLocation,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0, top: 4.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      'VALID\nTHRU',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 10.0,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        slThang.toString(),
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0, top: 4.0),
+                child: Text(
+                  slNgay.toString(),
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ))
+        ],
+      ),
+    );
   }
 }

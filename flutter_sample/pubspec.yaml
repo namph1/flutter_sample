@@ -33,6 +33,7 @@ flutter:
     - assets/logo.png
     - assets/logo_sample.png
     - assets/alucard.jpg
+    - image/
   fonts:
       - family: Nunito
         fonts:
