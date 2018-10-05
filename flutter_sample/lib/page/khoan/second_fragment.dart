@@ -6,6 +6,8 @@ import 'package:flutter_sample/model/khoan_model.dart';
 import 'package:flutter_sample/utils/key.dart';
 import 'package:flutter/foundation.dart';
 import 'package:menu_swipe_helpers/menu_swipe_helpers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class SecondFragment extends StatelessWidget {
   @override
@@ -15,8 +17,15 @@ class SecondFragment extends StatelessWidget {
 }
 
 //===========================================================================
-Future<List<Khoan>> getKhoan(http.Client client) async {
-  final response = await client.get('http://' + KeyUtils.url + ':5000/khoan');
+Future<List<Khoan>> getKhoan(http.Client client, int order) async {
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  var manvtt = pref.getString("code");
+  final response = await client.get('http://' +
+      KeyUtils.url +
+      ':5000/khoanchitiet?id=' +
+      order.toString() +
+      '&manvtt=' +
+      manvtt);
   return compute(parseKhoan, response.body);
 }
 
@@ -27,23 +36,36 @@ List<Khoan> parseKhoan(String responseBody) {
 }
 
 //=============================================================================
-Future<List<DMKhoan>> getDmKhoan(http.Client client) async {
-  final response = await client.get('http://' + KeyUtils.url + ':5000/dmkhoan');
-  return compute(parseDmKhoan, response.body);
-}
-
-List<DMKhoan> parseDmKhoan(String responseBody) {
-  final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
-  return parsed.map<DMKhoan>((jsons) => DMKhoan.fromJson(jsons)).toList();
-}
-
-//=============================================================================
 class KhoanPage extends StatefulWidget {
   @override
   _KhoanPageState createState() => _KhoanPageState();
 }
 
 class _KhoanPageState extends State<KhoanPage> with DrawerStateMixin {
+  var ten1 = '';
+  var ten2 = '';
+  var id1 = 0;
+  var id2 = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    this.getTabName();
+  }
+
+  getTabName() async {
+    final response = await http.get('http://' + KeyUtils.url + ':5000/dmkhoan');
+    final parsed = json.decode(response.body).cast<Map<String, dynamic>>();
+    List<DMKhoan> lst =
+        parsed.map<DMKhoan>((jsons) => DMKhoan.fromJson(jsons)).toList();
+    setState(() {
+      ten1 = lst.elementAt(0).ten;
+      ten2 = lst.elementAt(1).ten;
+      id1 = lst.elementAt(0).id;
+      id2 = lst.elementAt(1).id;
+    });
+  }
+
   @override
   Widget buildAppBar() {
     return new AppBar(
@@ -112,16 +134,16 @@ class _KhoanPageState extends State<KhoanPage> with DrawerStateMixin {
         onTap: (index) {
           _curIndex = index;
           setState(() {});
-        },        
+        },
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), 
-          title: Text("Home"), backgroundColor: Colors.white10),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings), title: Text("Setting"), backgroundColor: Colors.white10),
+              icon: Icon(Icons.home),
+              title: Text(ten1),
+              backgroundColor: Colors.white10),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings), title: Text("Setting"), backgroundColor: Colors.white10),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings), title: Text("Setting"), backgroundColor: Colors.white10)
+              icon: Icon(Icons.settings),
+              title: Text(ten2),
+              backgroundColor: Colors.white10),
         ],
       ),
       body: new Center(
@@ -136,19 +158,27 @@ class _KhoanPageState extends State<KhoanPage> with DrawerStateMixin {
         return Container(
             // color: Colors.red,
             child: FutureBuilder<List<Khoan>>(
-              future: getKhoan(http.Client()),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) print(snapshot.error);
-                return snapshot.hasData
-                    ? ListViewKhoan(khoans: snapshot.data)
-                    : Center(child: CircularProgressIndicator());
-              },
-            ));
+          future: getKhoan(http.Client(), id1),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) print(snapshot.error);
+            return snapshot.hasData
+                ? ListViewKhoan(khoans: snapshot.data)
+                : Center(child: CircularProgressIndicator());
+          },
+        ));
         break;
       default:
         return Container(
-          child: new Icon(Icons.directions_bike),
-        );
+            // color: Colors.red,
+            child: FutureBuilder<List<Khoan>>(
+          future: getKhoan(http.Client(), id2),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) print(snapshot.error);
+            return snapshot.hasData
+                ? ListViewKhoan(khoans: snapshot.data)
+                : Center(child: CircularProgressIndicator());
+          },
+        ));
         break;
     }
   }
@@ -161,6 +191,7 @@ class ListViewKhoan extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+     var f = new NumberFormat("###,###", "en_US");
     return Container(
       child: ListView.builder(
           itemCount: khoans.length,
@@ -184,9 +215,23 @@ class ListViewKhoan extends StatelessWidget {
                       fontStyle: FontStyle.italic,
                     ),
                   ),
-                  trailing: new Text(
-                    '${khoans[position].sotan} tấn',
-                    style: TextStyle(color: Colors.red, fontSize: 25.0),
+                  trailing: new Container(
+                    child: Column(
+                      children: <Widget>[
+                        new Text(
+                          'Mức khoán: ${khoans[position].sotan}',
+                          style: TextStyle(color: Colors.red, fontSize: 16.0),
+                        ),
+                        new Text(
+                          'Sản lượng: ${f.format(khoans[position].tong == null ? 0: khoans[position].tong)}',
+                          style: TextStyle(color: Colors.blue, fontSize: 16.0),
+                        ),
+                        new Text(
+                          'Thừa/thiếu: ${f.format(khoans[position].sothuathieu == null? 0: khoans[position].sothuathieu)}',
+                          style: TextStyle(color: Colors.black, fontSize: 15.0),
+                        )
+                      ],
+                    ),
                   ),
                   onTap: () => _onTapItem(context, khoans[position]),
                 ),

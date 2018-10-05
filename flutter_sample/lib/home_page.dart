@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sample/page/first_fragment.dart';
-import 'package:flutter_sample/page/second_fragment.dart';
-import 'package:flutter_sample/page/third_fragment.dart';
-import 'package:flutter_sample/page/dathang_page.dart';
-import 'package:flutter_sample/page/congno_page.dart';
+import 'package:flutter_sample/page/trangchu/first_fragment.dart';
+import 'package:flutter_sample/page/khoan/second_fragment.dart';
+import 'package:flutter_sample/page/dathang/third_fragment.dart';
+import 'package:flutter_sample/page/donhang/dathang_page.dart';
+import 'package:flutter_sample/page/congno/congno_page.dart';
 import 'package:flutter_sample/page/bieudo.dart';
+import 'package:flutter_sample/page/thanhpham/tonkho/tonkho_page.dart';
 import 'package:menu_swipe_helpers/menu_swipe_helpers.dart';
 
 var name, emails;
@@ -59,7 +60,7 @@ class HomePageState extends State<HomePage> {
   static final _khoTP = new DrawerDefinition(
       title: "Kho Thành phẩm",
       iconData: Icons.atm,
-      widgetBuilder: (BuildContext context) => new BieuDoScreen());
+      widgetBuilder: (BuildContext context) => new TonKhoPage());
 
   static final _congNo = new DrawerDefinition(
       title: "Công nợ",

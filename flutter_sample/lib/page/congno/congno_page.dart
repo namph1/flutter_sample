@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_sample/page/congno_detail.dart';
+import 'package:flutter_sample/page/congno/congno_detail.dart';
 
 class CongNoScreen extends StatelessWidget {
   @override
@@ -84,7 +84,7 @@ class ListViewKhoan extends StatelessWidget {
               margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
               child: Container(
                 decoration:
-                    BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+                    BoxDecoration(color: Color.fromRGBO(64, 75, 96, 0.9)),
                 child: new ListTile(
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
@@ -94,7 +94,7 @@ class ListViewKhoan extends StatelessWidget {
                         border: new Border(
                             right: new BorderSide(
                                 width: 1.0, color: Colors.white24))),
-                    child: new Text('${f.format(khoans[position].sono)}', style: TextStyle(color: Colors.white),),
+                    child: new Text('${f.format(khoans[position].sono)}', style: TextStyle(color: Colors.white,fontSize: 20.0),),
                   ),
                   title: Text(
                     '${khoans[position].madt}',
@@ -106,7 +106,7 @@ class ListViewKhoan extends StatelessWidget {
                   subtitle: Text(
                     '${khoans[position].hoten}',
                     style: new TextStyle(
-                      fontSize: 18.0,
+                      fontSize: 15.0,
                       fontStyle: FontStyle.italic,
                       color: Colors.white
                     ),

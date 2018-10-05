@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sample/page/first_fragment.dart';
-import 'package:flutter_sample/page/second_fragment.dart';
-import 'package:flutter_sample/page/third_fragment.dart';
+import 'package:flutter_sample/page/trangchu/first_fragment.dart';
+import 'package:flutter_sample/page/khoan/second_fragment.dart';
+import 'package:flutter_sample/page/dathang/third_fragment.dart';
 import 'package:flutter_sample/utils/share_pref_utils.dart';
 
 class DrawerItem {

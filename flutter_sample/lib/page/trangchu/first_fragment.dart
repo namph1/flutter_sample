@@ -75,6 +75,13 @@ class _FirstPageState extends State<FirstPage> with DrawerStateMixin {
   }
 
   @override
+  Widget buildAppBar() {
+    return new AppBar(
+      title: new Text("Trang chủ"),
+    );
+  }
+
+  @override
   Widget buildBody() {
     Widget buildListTile(String title, int sanluong) {
       return new ListTile(
@@ -128,6 +135,11 @@ class _FirstPageState extends State<FirstPage> with DrawerStateMixin {
     Widget _buildBox(String titleCard, dynamic sl1, dynamic sl2, dynamic sl3) {
       return new Container(
         margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+        // decoration: BoxDecoration(
+        //     image: DecorationImage(
+        //   image: AssetImage("image/bg_purple_card.png"),
+        //   fit: BoxFit.fill,
+        // )),
         child: new SizedBox(
           child: _buildCard(titleCard, sl1, sl2, sl3),
           height: 260.0,
@@ -148,8 +160,11 @@ class _FirstPageState extends State<FirstPage> with DrawerStateMixin {
       ],
     );
 
-    // return new Column(
-
+    // return new Container(
+    //   height: 600.0,
+    //     child: new Column(
+    //   crossAxisAlignment: CrossAxisAlignment.stretch,
+    //   mainAxisAlignment: MainAxisAlignment.center,
     //   children: <Widget>[
     //     new Expanded(
     //       child: CardWidget(
@@ -166,7 +181,7 @@ class _FirstPageState extends State<FirstPage> with DrawerStateMixin {
     //       ),
     //     ),
     //   ],
-    // );
+    // ));
 
     // return new Container(
     //   margin: EdgeInsets.only(top: 10.0),

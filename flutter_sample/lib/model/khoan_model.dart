@@ -5,18 +5,23 @@ class Khoan {
   final String tenkh;
   final String diachi;
   final String nguoisua;
+  final int tong;
+  final int sothuathieu;
 
   Khoan(
-      {this.id, this.makh, this.sotan, this.tenkh, this.diachi, this.nguoisua});
+      {this.id, this.makh, this.sotan, this.tenkh, 
+      this.diachi, this.nguoisua, this.tong, this.sothuathieu});
 
   factory Khoan.fromJson(Map<String, dynamic> json) {
     return Khoan(
       id: json['ID'],
-      sotan: json['SoTan'],
-      makh: json['MaKH'],
-      tenkh: json['TenKH'],
+      sotan: json['MucKhoan'],
+      makh: json['MaDT'],
+      tenkh: json['TEN_KHACH_HANG'],
       diachi: json['DiaChiTat'],
       nguoisua: json['NguoiSua'],
+      tong: json['Tong'],
+      sothuathieu: json['SoThuaThieu'],
     );
   }
 }
