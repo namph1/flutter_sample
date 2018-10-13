@@ -73,57 +73,6 @@ class _KhoanPageState extends State<KhoanPage> with DrawerStateMixin {
     );
   }
 
-  List<Widget> _buildTab() {
-    List<Widget> list = new List();
-
-    list.add(new Tab(
-      text: "Tháng 7/2018",
-    ));
-    list.add(new Tab(
-      text: "Tháng 6/2018",
-    ));
-
-    return list;
-  }
-
-  // @override
-  // Widget buildBody() {
-  //   return new DefaultTabController(
-  //     length: 7,
-  //     child: new Scaffold(
-  //       body: new TabBarView(
-  //         children: [
-  //           Container(
-  //             color: Colors.white,
-  //             child: FutureBuilder<List<Khoan>>(
-  //               future: getKhoan(http.Client()),
-  //               builder: (context, snapshot) {
-  //                 if (snapshot.hasError) print(snapshot.error);
-  //                 return snapshot.hasData
-  //                     ? ListViewKhoan(khoans: snapshot.data)
-  //                     : Center(child: CircularProgressIndicator());
-  //               },
-  //             ),
-  //           ),
-  //           new Icon(
-  //             Icons.directions_bike,
-  //             size: 50.0,
-  //           ),
-  //         ],
-  //       ),
-  //       bottomNavigationBar: new TabBar(
-  //         tabs: this._buildTab(),
-  //         labelColor: Colors.red,
-  //         unselectedLabelColor: Colors.blue,
-  //         indicatorSize: TabBarIndicatorSize.label,
-  //         indicatorPadding: EdgeInsets.all(5.0),
-  //         indicatorColor: Colors.blue,
-  //       ),
-  //       backgroundColor: Colors.black12,
-  //     ),
-  //   );
-  // }
-
   int _curIndex = 0;
 
   @override
@@ -155,33 +104,26 @@ class _KhoanPageState extends State<KhoanPage> with DrawerStateMixin {
   Widget _getWidget() {
     switch (_curIndex) {
       case 0:
-        return Container(
-            // color: Colors.red,
-            child: FutureBuilder<List<Khoan>>(
-          future: getKhoan(http.Client(), id1),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) print(snapshot.error);
-            return snapshot.hasData
-                ? ListViewKhoan(khoans: snapshot.data)
-                : Center(child: CircularProgressIndicator());
-          },
-        ));
+        return _buildBody1(id1);
         break;
       default:
-        return Container(
-            // color: Colors.red,
-            child: FutureBuilder<List<Khoan>>(
-          future: getKhoan(http.Client(), id2),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) print(snapshot.error);
-            return snapshot.hasData
-                ? ListViewKhoan(khoans: snapshot.data)
-                : Center(child: CircularProgressIndicator());
-          },
-        ));
+        return _buildBody1(id2);
         break;
     }
   }
+}
+
+Widget _buildBody1(int id) {
+  return Container(
+      child: FutureBuilder<List<Khoan>>(
+    future: getKhoan(http.Client(), id),
+    builder: (context, snapshot) {
+      if (snapshot.hasError) print(snapshot.error);
+      return snapshot.hasData
+          ? ListViewKhoan(khoans: snapshot.data)
+          : Center(child: CircularProgressIndicator());
+    },
+  ));
 }
 
 class ListViewKhoan extends StatelessWidget {
@@ -191,51 +133,52 @@ class ListViewKhoan extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     var f = new NumberFormat("###,###", "en_US");
+    var f = new NumberFormat("###,###", "en_US");
     return Container(
       child: ListView.builder(
           itemCount: khoans.length,
-          padding: const EdgeInsets.all(15.0),
+          // padding: const EdgeInsets.all(15.0),
           itemBuilder: (context, position) {
-            return Column(
-              children: <Widget>[
-                Divider(height: 5.0),
-                ListTile(
-                  title: Text(
-                    '${khoans[position].tenkh}',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      color: Colors.deepOrangeAccent,
-                    ),
+            return Card(
+              elevation: 8.0,
+              margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+              child: ListTile(
+                title: Text(
+                  '${khoans[position].tenkh}',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.deepOrangeAccent,
                   ),
-                  subtitle: Text(
-                    '${khoans[position].makh}-${khoans[position].diachi}',
-                    style: new TextStyle(
-                      fontSize: 18.0,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                  trailing: new Container(
-                    child: Column(
-                      children: <Widget>[
-                        new Text(
-                          'Mức khoán: ${khoans[position].sotan}',
-                          style: TextStyle(color: Colors.red, fontSize: 16.0),
-                        ),
-                        new Text(
-                          'Sản lượng: ${f.format(khoans[position].tong == null ? 0: khoans[position].tong)}',
-                          style: TextStyle(color: Colors.blue, fontSize: 16.0),
-                        ),
-                        new Text(
-                          'Thừa/thiếu: ${f.format(khoans[position].sothuathieu == null? 0: khoans[position].sothuathieu)}',
-                          style: TextStyle(color: Colors.black, fontSize: 15.0),
-                        )
-                      ],
-                    ),
-                  ),
-                  onTap: () => _onTapItem(context, khoans[position]),
                 ),
-              ],
+                subtitle: Text(
+                  '${khoans[position].makh}-${khoans[position].diachi}',
+                  style: new TextStyle(
+                    fontSize: 18.0,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                trailing: new Container(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      new Text(
+                        'Mức khoán: ${khoans[position].sotan}',
+                        style: TextStyle(color: Colors.red, fontSize: 16.0),
+                      ),
+                      new Text(
+                        'Sản lượng: ${f.format(khoans[position].tong == null ? 0 : khoans[position].tong)}',
+                        style: TextStyle(color: Colors.blue, fontSize: 16.0),
+                      ),
+                      new Text(
+                        'Thừa/thiếu: ${f.format(khoans[position].sothuathieu == null ? 0 : khoans[position].sothuathieu)}',
+                        style: TextStyle(color: Colors.black, fontSize: 15.0),
+                      )
+                    ],
+                  ),
+                ),
+                onTap: () => _onTapItem(context, khoans[position]),
+              ),
             );
           }),
     );

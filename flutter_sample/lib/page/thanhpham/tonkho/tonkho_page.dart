@@ -76,37 +76,44 @@ class TonKhoWidget extends StatelessWidget {
           return Card(
             child: Container(
               decoration:
-                    BoxDecoration(color: Color.fromRGBO(230,230,230, 0.9)),
+                  BoxDecoration(color: Color.fromRGBO(230, 230, 230, 0.9)),
               child: ListTile(
-                leading: Container(                  
-                    // padding: EdgeInsets.only(right: 100.0),                  
+                leading: Container(
+                  // padding: EdgeInsets.only(right: 100.0),
                   child: new Column(
-                    children: <Widget>[                      
-                      Text('${lstTonkho[position].tentp}', style: TextStyle(fontSize: 20.0),),
+                    children: <Widget>[
+                      Text(
+                        '${lstTonkho[position].tentp}',
+                        style: TextStyle(fontSize: 20.0),
+                      ),
                       Text('${lstTonkho[position].gio}'),
                       // Text('${lstTonkho[position].matp}'),
                     ],
                   ),
                 ),
-                title: Container(
-                  child: Center(
-                    child: Text('Tồn kho: ${f.format(lstTonkho[position].tonkho)}'),
-                  ),
-                ),
+                // title: Container(
+                //   child:
+                //       Text('Tồn kho: ${f.format(lstTonkho[position].tonkho)}'),
+                // ),
                 subtitle: Container(
                   child: new Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
+                      Text(
+                        'Tồn kho: ${f.format(lstTonkho[position].tonkho)}',
+                        style:
+                            TextStyle(fontSize: 15.0, color: Colors.redAccent),
+                      ),
                       Text(
                           'Đợi xuất: ${f.format(lstTonkho[position].doixuat)}'),
                       Text(
-                          'Sau đợi xuất: ${f.format(lstTonkho[position].saudoixuat)}', 
-                          style: TextStyle(
-                            fontSize: 15.0,
-                            color: Colors.blueAccent
-                          ),)
+                        'Sau đợi xuất: ${f.format(lstTonkho[position].saudoixuat)}',
+                        style:
+                            TextStyle(fontSize: 15.0, color: Colors.blueAccent),
+                      )
                     ],
                   ),
-                ),                
+                ),
               ),
             ),
           );
