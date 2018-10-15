@@ -54,6 +54,24 @@ class _DonHangDetailState extends State<DonHangDetail> {
   _DonHangDetailState({this.madt, this.idkey});
 
   int _curIndex = 0;
+
+  Widget _buildAction() {
+    if (_curIndex == 0) {
+      return new Container();
+    } else {
+      return IconButton(
+        icon: const Icon(Icons.check),
+        color: Colors.orangeAccent,
+        tooltip: 'Lưu thay đổi',
+        onPressed: save,
+      );
+    }
+  }
+
+  void save(){
+    print(mapsp);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,6 +79,7 @@ class _DonHangDetailState extends State<DonHangDetail> {
         title: new Text('Đơn hàng của: $madt'),
         automaticallyImplyLeading: true,
         primary: true,
+        actions: <Widget>[_buildAction()],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _curIndex,
@@ -149,14 +168,19 @@ class _BuildEditWidget extends StatelessWidget {
                     cursorColor: Colors.red,
                     textAlign: TextAlign.end,
                     style: TextStyle(color: Colors.red, fontSize: 25.0),
-                    decoration: new InputDecoration.collapsed(hintText: mapsp.containsKey('${lstDetails[position].matp.toUpperCase()}') == true? mapsp['${lstDetails[position].matp}'].toString() : '0'),
+                    decoration: new InputDecoration.collapsed(
+                        hintText: mapsp.containsKey(
+                                    '${lstDetails[position].matp.toUpperCase()}') ==
+                                true
+                            ? mapsp['${lstDetails[position].matp}'].toString()
+                            : '0'),
                     keyboardType: TextInputType.number,
                     onChanged: (text) {
                       var count = int.parse(text);
-                      if (count > 0) {
-                        // var key =
-                        //     '${lstDetails[position].matp}-${lstDetails[position].baobi}';
-                        // mapsp[key] = text;
+                      if (count >= 0) {
+                        var key =
+                            '${lstDetails[position].matp}';
+                        mapsp[key] = count;
                       }
                     },
                   ),

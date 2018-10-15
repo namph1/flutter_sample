@@ -94,18 +94,24 @@ class _LoginPageState extends State<LoginPage> {
       });
     }
 
-    final loginButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.0),
-      child: Material(
-        borderRadius: BorderRadius.circular(30.0),
-        shadowColor: Colors.lightBlueAccent.shade100,
-        elevation: 5.0,
-        child: MaterialButton(
-          minWidth: 200.0,
-          height: 42.0,
-          onPressed: _onLogin,
-          color: Colors.lightBlueAccent,
-          child: Text('Đăng nhập', style: TextStyle(color: Colors.white)),
+    final loginButton = new GestureDetector(
+      onTap: _onLogin,
+      child: new Container(
+        width: 100.0,
+        height: 40.0,
+        alignment: FractionalOffset.center,
+        decoration: new BoxDecoration(
+          color: const Color.fromRGBO(51, 204, 255, 1.0),
+          borderRadius: new BorderRadius.all(const Radius.circular(30.0)),
+        ),
+        child: new Text(
+          "Đăng nhập",
+          style: new TextStyle(
+            color: Colors.white,
+            fontSize: 20.0,
+            fontWeight: FontWeight.w300,
+            letterSpacing: 0.3,
+          ),
         ),
       ),
     );

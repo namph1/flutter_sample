@@ -105,7 +105,7 @@ class _SanPhamPageState extends State<SanPhamPage> with DrawerStateMixin {
               ),
               color: Colors.blue,
               onPressed: () {
-                // sendDonHangToServer();
+                sendDonHangToServer();
                 Navigator.of(context, rootNavigator: true).pop('dialog');
               },
             ),
