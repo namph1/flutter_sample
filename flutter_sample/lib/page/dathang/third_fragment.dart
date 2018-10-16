@@ -55,22 +55,36 @@ class _SanPhamPageState extends State<SanPhamPage> with DrawerStateMixin {
     );
   }
 
-  void sendDonHangToServer() {
-    var obj = new DonHangModel(
+  void insert(String dataInput) async {
+    var url = 'http://' + KeyUtils.url + ':5000/insertNew?data=' + dataInput;
+    var httpClient = new HttpClient();
+    var request = await httpClient.getUrl(Uri.parse(url));
+    var response = await request.close();
+    if (response.statusCode == 200) {
+      var jsonString = await response.transform(utf8.decoder).join();
+      print(jsonString);
+    } else {
+    }
+  }
+
+  void sendDonHangToServer() async {
+    var obj = new DonHangModelOri(
       action: KeyUtils.donhangaction,
       makh: makh,
       lstHangHoa: mapsp,
       key: '',
+      idkey: '',
     );
-    var channel = IOWebSocketChannel.connect("ws://" + KeyUtils.url + ":5001");
-    channel.sink.add(json.encode(obj.toMap()));
-    channel.sink.close();
+    insert(json.encode(obj.toMap()));
+    // var channel = IOWebSocketChannel.connect("ws://" + KeyUtils.url + ":5001");
+    // channel.sink.add(json.encode(obj.toMap()));
+    // channel.sink.close();
   }
 
   List<Widget> _buildContentDialog() {
     List<Widget> list = new List();
     mapsp.forEach((key, value) {
-      list.add(new Text('${key.split("-")[1]} : ${value}'));
+      list.add(new Text('${key} : ${value}'));
     });
     return list;
   }
@@ -171,7 +185,7 @@ class _SanPhamPageState extends State<SanPhamPage> with DrawerStateMixin {
   }
 }
 
-Map<String, String> mapsp = new Map();
+Map<String, int> mapsp = new Map();
 String makh;
 
 class PageDrop extends StatefulWidget {
@@ -259,37 +273,45 @@ class PageDropState extends State<PageDrop> {
               child: ListView.builder(
             itemCount: list.length,
             itemBuilder: ((BuildContext _context, int position) {
-              return new ListTile(
-                leading:
-                    new Text('${position + 1}- ' + list[position]['TenFull']),
+              return Card(
+                  child: new ListTile(
+                leading: Container(
+                    padding: EdgeInsets.only(right: 12.0),
+                    decoration: new BoxDecoration(
+                        border: new Border(
+                            right:
+                                new BorderSide(width: 1.0, color: Colors.red))),
+                    child: Text(
+                      '${position + 1}',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 20.0,
+                      ),
+                      textAlign: TextAlign.end,
+                    )),
+                title: new Text('${list[position]['TENTP']}'),
+                subtitle: new Text(
+                    '${list[position]["TenFull"].toString().split("(")[1].replaceAll(")", "")}'),
                 trailing: new Container(
-                  child: new Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      new Expanded(
-                        child: new TextField(
-                          textAlign: TextAlign.end,
-                          style: TextStyle(color: Colors.red, fontSize: 20.0),
-                          decoration:
-                              new InputDecoration.collapsed(hintText: '0'),
-                          keyboardType: TextInputType.number,
-                          onChanged: (text) {
-                            var count = int.parse(text);
-                            if (count > 0) {
-                              var key =
-                                  '${list[position]["MATP"]}-${list[position]["TenFull"]}';
-                              mapsp[key] = text;
-                            }
-                          },
-                        ),
-                      )
-                    ],
+                  width: 100.0,
+                  child: new TextField(
+                    cursorColor: Colors.red,
+                    textAlign: TextAlign.end,
+                    style: TextStyle(color: Colors.red, fontSize: 25.0),
+                    decoration: new InputDecoration.collapsed(hintText: '0'),
+                    keyboardType: TextInputType.number,
+                    onChanged: (text) {
+                      var count = int.parse(text);
+                      if (count > 0) {
+                        var key = '${list[position]["MATP"]}';
+                        mapsp[key] = count;
+                      }
+                    },
                   ),
                 ),
-              );
+              ));
             }),
-          )
-          ),
+          )),
         ],
       ),
     );

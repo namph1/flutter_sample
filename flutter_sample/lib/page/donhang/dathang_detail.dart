@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'dart:convert';
 import 'dart:async';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_sample/utils/key.dart';
 import 'package:flutter_sample/model/dondathang_model.dart';
+import 'package:flutter_sample/model/donhang_model.dart';
 
 class DonHangDetail extends StatefulWidget {
   final String madt;
@@ -68,8 +71,41 @@ class _DonHangDetailState extends State<DonHangDetail> {
     }
   }
 
-  void save(){
-    print(mapsp);
+  Future<String> saveData(String address, int port, String mess) async {
+    List<int> buffer = [];
+    Socket socket;
+    try {
+      socket = await Socket.connect(address, port);
+      var encoded = utf8.encode(mess);
+      socket.add(encoded);
+
+      await for (List<int> v in socket.asBroadcastStream()) {
+        buffer.addAll(v);
+        if (buffer.length >= 7) {
+          break;
+        }
+      }
+     
+    } on Exception {
+
+    }finally{
+      socket.destroy();
+    }
+
+    return utf8.decode(buffer);
+  }
+
+  void save() async {
+    var obj = new DonHangModelOri(
+      action: KeyUtils.donhangaction,
+      makh: madt,
+      lstHangHoa: mapsp,
+      key: '',
+      idkey: idkey,
+    );
+    String rs = await saveData(
+        KeyUtils.url, KeyUtils.portTcp, json.encode(obj.toMap()));
+    // print(te);
   }
 
   @override
@@ -178,8 +214,7 @@ class _BuildEditWidget extends StatelessWidget {
                     onChanged: (text) {
                       var count = int.parse(text);
                       if (count >= 0) {
-                        var key =
-                            '${lstDetails[position].matp}';
+                        var key = '${lstDetails[position].matp}';
                         mapsp[key] = count;
                       }
                     },
