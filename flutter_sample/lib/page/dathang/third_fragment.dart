@@ -95,7 +95,7 @@ class _SanPhamPageState extends State<SanPhamPage> with DrawerStateMixin {
   List<Widget> _buildContentDialog() {
     List<Widget> list = new List();
     mapsp.forEach((key, value) {
-      list.add(new Text('${key} : ${value}'));
+      list.add(new Text(key + ':' + value.toString()));
     });
     return list;
   }

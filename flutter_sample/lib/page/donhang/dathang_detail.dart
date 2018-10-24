@@ -115,9 +115,8 @@ class _DonHangDetailState extends State<DonHangDetail> {
       key: '',
       idkey: idkey,
     );
-    String rs = await saveData(
+    await saveData(
         KeyUtils.url, KeyUtils.portTcp, json.encode(obj.toMap()));
-    // print(te);
   }
 
   @override

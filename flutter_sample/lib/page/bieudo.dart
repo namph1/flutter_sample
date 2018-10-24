@@ -28,11 +28,11 @@ class BieuDoPage extends StatefulWidget {
 class _BieuDoPageState extends State<BieuDoPage> with DrawerStateMixin {
   int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  // void _incrementCounter() {
+  //   setState(() {
+  //     _counter++;
+  //   });
+  // }
 
   @override
   Widget buildBody() {
