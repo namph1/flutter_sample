@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:menu_swipe_helpers/menu_swipe_helpers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FirstFragment extends StatelessWidget {
   @override
@@ -22,7 +23,7 @@ class FirstPage extends StatefulWidget {
 }
 
 class _FirstPageState extends State<FirstPage> with DrawerStateMixin {
-  var token = "", users = "";
+  var  users = "";
   var ngayHD = 0,
       ngayDN = 0,
       ngayHN = 0,
@@ -34,7 +35,7 @@ class _FirstPageState extends State<FirstPage> with DrawerStateMixin {
   @override
   void initState() {
     SharePreUtils sharePreUtils = new SharePreUtils();
-    sharePreUtils.getPref("token").then(initToken);
+    // sharePreUtils.getPref("token").then(initToken);
     sharePreUtils.getPref("name").then(initUser);
     super.initState();
     ngayHD = 500000000;
@@ -42,7 +43,9 @@ class _FirstPageState extends State<FirstPage> with DrawerStateMixin {
   }
 
   getHome() async {
-    final response = await http.get('http://' + KeyUtils.url + ':5000/home');
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var token = pref.getString("token");
+    final response = await http.get('http://' + KeyUtils.url + ':5000/home?token='+ token);
 
     if (response.statusCode == 200) {
       SanLuongChungList sanluongs =
@@ -62,11 +65,11 @@ class _FirstPageState extends State<FirstPage> with DrawerStateMixin {
     }
   }
 
-  void initToken(String _token) {
-    setState(() {
-      this.token = _token;
-    });
-  }
+  // void initToken(String _token) {
+  //   setState(() {
+  //     this.token = _token;
+  //   });
+  // }
 
   void initUser(String _user) {
     setState(() {

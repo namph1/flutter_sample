@@ -8,23 +8,31 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_sample/utils/key.dart';
 import 'package:flutter_sample/model/dondathang_model.dart';
 import 'package:flutter_sample/model/donhang_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DonHangDetail extends StatefulWidget {
   final String madt;
   final String idkey;
+  final int type;
 
-  DonHangDetail({this.madt, this.idkey});
+  DonHangDetail({this.madt, this.idkey, this.type});
 
   _DonHangDetailState createState() =>
-      _DonHangDetailState(madt: madt, idkey: idkey);
+      _DonHangDetailState(madt: madt, idkey: idkey, type: type);
 }
 
 Map<String, int> mapsp = new Map();
 
 Future<List<DonHangDetailModel>> getDonHang(
     http.Client client, String idkey) async {
-  final response = await client
-      .get('http://' + KeyUtils.url + ':5000/getchitietdonhang?idkey=' + idkey);
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  var token = pref.getString("token");
+  final response = await client.get('http://' +
+      KeyUtils.url +
+      ':5000/getchitietdonhang?idkey=' +
+      idkey +
+      '&token=' +
+      token);
   return compute(parseDonHang, response.body);
 }
 
@@ -37,8 +45,14 @@ List<DonHangDetailModel> parseDonHang(String responseBody) {
 }
 
 Future<List<DonHangModel>> getDsach(http.Client client, String madt) async {
-  final response = await client
-      .get('http://' + KeyUtils.url + ':5000/dshanghoadaily?madt=' + madt);
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  var token = pref.getString("token");
+  final response = await client.get('http://' +
+      KeyUtils.url +
+      ':5000/dshanghoadaily?madt=' +
+      madt +
+      '&token=' +
+      token);
   return compute(parseDanhsach, response.body);
 }
 
@@ -53,13 +67,14 @@ List<DonHangModel> parseDanhsach(String responseBody) {
 class _DonHangDetailState extends State<DonHangDetail> {
   final String madt;
   final String idkey;
+  final int type;
 
-  _DonHangDetailState({this.madt, this.idkey});
+  _DonHangDetailState({this.madt, this.idkey, this.type});
 
   int _curIndex = 0;
 
   Widget _buildAction() {
-    if (_curIndex == 0) {
+    if (_curIndex == 0 || type == 2) {
       return new Container();
     } else {
       return IconButton(
@@ -85,10 +100,7 @@ class _DonHangDetailState extends State<DonHangDetail> {
           break;
         }
       }
-     
-    } on Exception {
-
-    }finally{
+    } on Exception {} finally {
       socket.destroy();
     }
 

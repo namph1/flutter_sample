@@ -7,4 +7,5 @@ class SharePreUtils {
     var value = pref.getString(key);
     return value;
   }
+
 }

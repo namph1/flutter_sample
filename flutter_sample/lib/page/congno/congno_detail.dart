@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter_sample/utils/key.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CongNoDetailWidget extends StatefulWidget {
   final String madt;
@@ -86,21 +87,27 @@ class _CongNoDetailWidgetState extends State<CongNoDetailWidget> {
                         .split("T")[0]
                         .split("-")[2]),
                   ),
-                  title: new Text((list[position]['Diễn Giải']), style: TextStyle(color: Colors.blue, fontSize: 18.0),),
+                  title: new Text(
+                    (list[position]['Diễn Giải']),
+                    style: TextStyle(color: Colors.blue, fontSize: 18.0),
+                  ),
                   subtitle: new Text(list[position]['Số CT']),
                   trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
-
                     children: <Widget>[
                       new Text(
-                        (list[position]['Diễn Giải']) == 'KM Tháng trước còn lại:' ?
-                        f.format(list[position]['Tiền KM']).toString() :
-                        f.format(list[position]['Số Tiền']).toString(),
-                       style: TextStyle(color: Colors.orange, fontSize: 20.0),),
-                      new Text(list[position]['Loại'] == 'BAN' ? 'Tiền KM: '+f.format(list[position]['Tiền KM']).toString() : ''),
-                        
-                        
-                        // 'Tiền KM: '+f.format(list[position]['Tiền KM']).toString()),
+                        (list[position]['Diễn Giải']) ==
+                                'KM Tháng trước còn lại:'
+                            ? f.format(list[position]['Tiền KM']).toString()
+                            : f.format(list[position]['Số Tiền']).toString(),
+                        style: TextStyle(color: Colors.orange, fontSize: 20.0),
+                      ),
+                      new Text(list[position]['Loại'] == 'BAN'
+                          ? 'Tiền KM: ' +
+                              f.format(list[position]['Tiền KM']).toString()
+                          : ''),
+
+                      // 'Tiền KM: '+f.format(list[position]['Tiền KM']).toString()),
                     ],
                   ));
             }),
@@ -122,12 +129,16 @@ class _CongNoDetailWidgetState extends State<CongNoDetailWidget> {
   }
 
   Future<List> getData(String madt, String month) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var token = pref.getString("token");
     var url = 'http://' +
         KeyUtils.url +
         ':5000/getdetailfromto?madt=' +
         madt +
         '&month=' +
-        month;
+        month +
+        '&token=' +
+        token;
     List data = new List();
     var httpClient = new HttpClient();
     var request = await httpClient.getUrl(Uri.parse(url));

@@ -4,7 +4,7 @@ import 'package:flutter_sample/page/khoan/second_fragment.dart';
 import 'package:flutter_sample/page/dathang/third_fragment.dart';
 import 'package:flutter_sample/page/donhang/dathang_page.dart';
 import 'package:flutter_sample/page/congno/congno_page.dart';
-import 'package:flutter_sample/page/bieudo.dart';
+// import 'package:flutter_sample/page/bieudo.dart';
 import 'package:flutter_sample/page/thanhpham/tonkho/tonkho_page.dart';
 import 'package:menu_swipe_helpers/menu_swipe_helpers.dart';
 

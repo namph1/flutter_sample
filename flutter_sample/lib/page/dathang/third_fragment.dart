@@ -9,7 +9,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:web_socket_channel/io.dart';
+// import 'package:web_socket_channel/io.dart';
 
 class ThirdFragment extends StatelessWidget {
   @override
@@ -23,8 +23,13 @@ class ThirdFragment extends StatelessWidget {
 Future<List<DaiLy>> getDaiLy(http.Client client) async {
   SharedPreferences pref = await SharedPreferences.getInstance();
   var manvtt = pref.getString("code");
-  final response = await client.get(
-      'http://' + KeyUtils.url + ':5000/getdailytheotiepthi?manv=' + manvtt);
+  var token = pref.getString("token");
+  final response = await client.get('http://' +
+      KeyUtils.url +
+      ':5000/getdailytheotiepthi?manv=' +
+      manvtt +
+      '&token=' +
+      token);
   return compute(parseDaiLy, response.body);
 }
 
@@ -56,15 +61,21 @@ class _SanPhamPageState extends State<SanPhamPage> with DrawerStateMixin {
   }
 
   void insert(String dataInput) async {
-    var url = 'http://' + KeyUtils.url + ':5000/insertNew?data=' + dataInput;
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var token = pref.getString("token");
+    var url = 'http://' +
+        KeyUtils.url +
+        ':5000/insertNew?data=' +
+        dataInput +
+        '&token=' +
+        token;
     var httpClient = new HttpClient();
     var request = await httpClient.getUrl(Uri.parse(url));
     var response = await request.close();
     if (response.statusCode == 200) {
       var jsonString = await response.transform(utf8.decoder).join();
       print(jsonString);
-    } else {
-    }
+    } else {}
   }
 
   void sendDonHangToServer() async {
@@ -229,7 +240,14 @@ class PageDropState extends State<PageDrop> {
   }
 
   Future<List> getData(String madt) async {
-    var url = 'http://' + KeyUtils.url + ':5000/dshanghoadaily?madt=' + madt;
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var token = pref.getString("token");
+    var url = 'http://' +
+        KeyUtils.url +
+        ':5000/dshanghoadaily?madt=' +
+        madt +
+        '&token=' +
+        token;
     List data = new List();
     var httpClient = new HttpClient();
     var request = await httpClient.getUrl(Uri.parse(url));
@@ -317,36 +335,3 @@ class PageDropState extends State<PageDrop> {
     );
   }
 }
-
-// child: ListView(
-//               children: <Widget>[
-//                 new ListTile(
-//                   title: Text('签名'),
-//                   trailing: new Container(
-//                     width: 150.0,
-//                     child: new Row(
-//                       mainAxisAlignment: MainAxisAlignment.end,
-//                       children: <Widget>[
-//                         new Expanded(
-//                           flex: 3,
-//                           child: new TextField(
-//                             textAlign: TextAlign.end,
-//                             style: new TextStyle(
-//                                 color: Colors.red, fontSize: 20.0),
-//                             decoration: new InputDecoration.collapsed(
-//                                 hintText: 'userAddr'),
-//                           ),
-//                         ),
-//                         new Expanded(
-//                           child: new IconButton(
-//                             icon: new Icon(Icons.chevron_right),
-//                             color: Colors.black26,
-//                             onPressed: () {},
-//                           ),
-//                         )
-//                       ],
-//                     ),
-//                   ),
-//                 )
-//               ],
-//             ),

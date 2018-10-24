@@ -22,10 +22,11 @@ class CongNoScreen extends StatelessWidget {
 Future<List<CongNoModel>> getKhoan(http.Client client) async {
   SharedPreferences pref = await SharedPreferences.getInstance();
   var manvtt = pref.getString("code");
+  var token = pref.getString("token");
   final response = await client.get('http://' +
       KeyUtils.url +
       ':5000/getcongnohientaitonghop?manv=' +
-      manvtt);
+      manvtt + '&token=' + token);
   return compute(parseKhoan, response.body);
 }
 
@@ -77,7 +78,6 @@ class ListViewKhoan extends StatelessWidget {
     return Container(
       child: ListView.builder(
           itemCount: khoans.length,
-          // padding: const EdgeInsets.all(15.0),
           itemBuilder: (context, position) {
             return Card(
               elevation: 8.0,
@@ -116,34 +116,7 @@ class ListViewKhoan extends StatelessWidget {
                   onTap: () => _onTapItem(context, khoans[position]),
                 ),
               ),
-            );
-
-            // return Column(
-            //   children: <Widget>[
-            //     ListTile(
-            //       title: Text(
-            //         '${khoans[position].madt}',
-            //         style: TextStyle(
-            //           fontSize: 18.0,
-            //           color: Colors.deepOrangeAccent,
-            //         ),
-            //       ),
-            //       subtitle: Text(
-            //         '${khoans[position].hoten}',
-            //         style: new TextStyle(
-            //           fontSize: 18.0,
-            //           fontStyle: FontStyle.italic,
-            //         ),
-            //       ),
-            //       trailing: new Column(
-            //         children: <Widget>[
-            //           new Text('${f.format(khoans[position].sono)}'),
-            //         ],
-            //       ),
-            //       onTap: () => _onTapItem(context, khoans[position]),
-            //     ),
-            //   ],
-            // );
+            );            
           }),
     );
   }

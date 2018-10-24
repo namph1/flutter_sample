@@ -22,12 +22,15 @@ class DatHangScreen extends StatelessWidget {
 Future<List<DonDatHang>> getKhoan(http.Client client, int type) async {
   SharedPreferences pref = await SharedPreferences.getInstance();
   var manvtt = pref.getString("code");
+  var token = pref.getString("token");
   final response = await client.get('http://' +
       KeyUtils.url +
       ':5000/dondathang?mnvtt=' +
       manvtt +
       '&type=' +
-      type.toString());
+      type.toString() +
+      '&token=' +
+      token);
   return compute(parseChuaXuat, response.body);
 }
 
@@ -93,7 +96,7 @@ class _DatHangPageState extends State<DatHangPage> with DrawerStateMixin {
       builder: (context, snapshot) {
         if (snapshot.hasError) print(snapshot.error);
         return snapshot.hasData
-            ? ListViewKhoan(khoans: snapshot.data)
+            ? ListViewKhoan(khoans: snapshot.data, type: type,)
             : Center(child: CircularProgressIndicator());
       },
     ));
@@ -186,6 +189,7 @@ class ListViewKhoan extends StatelessWidget {
         builder: (context) => new DonHangDetail(
               madt: post.madt,
               idkey: post.idkey,
+              type: type,
             )));
   }
 }

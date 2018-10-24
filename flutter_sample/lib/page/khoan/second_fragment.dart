@@ -20,12 +20,15 @@ class SecondFragment extends StatelessWidget {
 Future<List<Khoan>> getKhoan(http.Client client, int order) async {
   SharedPreferences pref = await SharedPreferences.getInstance();
   var manvtt = pref.getString("code");
+  var token = pref.getString("token");
   final response = await client.get('http://' +
       KeyUtils.url +
       ':5000/khoanchitiet?id=' +
       order.toString() +
       '&manvtt=' +
-      manvtt);
+      manvtt +
+      '&token=' +
+      token);
   return compute(parseKhoan, response.body);
 }
 
@@ -54,7 +57,10 @@ class _KhoanPageState extends State<KhoanPage> with DrawerStateMixin {
   }
 
   getTabName() async {
-    final response = await http.get('http://' + KeyUtils.url + ':5000/dmkhoan');
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var token = pref.getString("token");
+    final response = await http
+        .get('http://' + KeyUtils.url + ':5000/dmkhoan?token=' + token);
     final parsed = json.decode(response.body).cast<Map<String, dynamic>>();
     List<DMKhoan> lst =
         parsed.map<DMKhoan>((jsons) => DMKhoan.fromJson(jsons)).toList();

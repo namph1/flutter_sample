@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TonKhoPage extends StatelessWidget {
   @override
@@ -19,9 +19,10 @@ class TonKhoPage extends StatelessWidget {
 }
 
 Future<List<TonKhoModel>> getKhoan(http.Client client) async {
-  // SharedPreferences pref = await SharedPreferences.getInstance();
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  var token = pref.getString("token");
   final response =
-      await client.get('http://' + KeyUtils.url + ':5000/gettonkho');
+      await client.get('http://' + KeyUtils.url + ':5000/gettonkho?token='+ token);
   return compute(parseKhoan, response.body);
 }
 
